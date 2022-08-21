@@ -1,2 +1,2 @@
-# renderer
-Implementing "The Ray Tracer Challenge" in Rust
+# Rendering from Scratch with Rust
+Implementing *The Ray Tracer Challenge* by James Buck in `Rust`

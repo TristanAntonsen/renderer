@@ -4,8 +4,22 @@ pub type point = Matrix1x4<f32>;
 // pub type vector = [f32; 4];
 pub type vector = Matrix1x4<f32>;
 
+pub struct Canvas {
+    pub pixels: Vec<Vec<f32>>
+}
+
+
+pub struct Color {
+    pub r: f32,
+    pub g: f32,
+    pub b: f32
+}
 pub struct Point {
     pub pos: [f32; 4]
+}
+
+pub struct Vector {
+    pub dir: [f32; 4]
 }
 
 impl Point {
@@ -16,10 +30,6 @@ impl Point {
             ]
         }
     }
-}
-
-pub struct Vector {
-    pub dir: [f32; 4]
 }
 
 impl Vector {

@@ -3,22 +3,17 @@ use nalgebra::{Matrix1x3, Matrix1x4};
 pub type point = Matrix1x4<f32>;
 // pub type vector = [f32; 4];
 pub type vector = Matrix1x4<f32>;
-
+pub type color = [f32; 3];
 pub struct Canvas {
-    pub pixels: Vec<Vec<f32>>,
+    pub pixels: Vec<Vec<color>>,
 }
 
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Self {
         Self {
-            pixels: vec![vec![0.0; height]; width],
+            pixels: vec![vec![[0.0,0.0,0.0]; height]; width],
         }
     }
-}
-pub struct Color {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
 }
 pub struct Point {
     pub pos: [f32; 4],

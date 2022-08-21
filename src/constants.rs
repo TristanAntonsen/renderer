@@ -15,6 +15,12 @@ impl Canvas {
         }
     }
 }
+
+impl Canvas {
+    pub fn write_pixel(&mut self, x: usize, y: usize, color: color) {
+        self.pixels[x][y] = color
+    }
+}
 pub struct Point {
     pub pos: [f32; 4],
 }

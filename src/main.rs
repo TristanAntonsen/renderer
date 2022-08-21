@@ -13,19 +13,19 @@ fn main() {
     let test_point = Matrix1x4::new(0.0, 0.0, 3.0, 1.0);
     let test_vector_2 = Vector::new(1.0, 1.0, 1.0);
 
-    let mut test_canvas = Canvas::new(500, 500);
-    for y in 100..111 {
-        for x in 0..500 {
+    let mut test_canvas = Canvas::new(720, 720);
+    for x in 0..240 {
+        for y in 0..720 {
             test_canvas.write_pixel(x, y, [1.0, 0.0, 0.0])
         }
     }
-    for y in 112..123 {
-        for x in 0..500 {
+    for x in 240..480 {
+        for y in 0..720 {
             test_canvas.write_pixel(x, y, [0.0, 1.0, 0.0])
         }
     }
-    for y in 124..135 {
-        for x in 0..500 {
+    for x in 480..720 {
+        for y in 0..720 {
             test_canvas.write_pixel(x, y, [0.0, 0.0, 1.0])
         }
     }

@@ -2,7 +2,7 @@ use std::fs;
 mod constants;
 mod export;
 mod tests;
-use constants::{point, vector, Canvas, Point, Vector};
+use constants::{point, vector, Canvas, Env, Projectile, Point, Vector};
 use nalgebra::Matrix1x4;
 use tests::{is_point, is_vector};
 extern crate image;
@@ -13,26 +13,16 @@ fn main() {
     let test_point = Matrix1x4::new(0.0, 0.0, 3.0, 1.0);
     let test_vector_2 = Vector::new(1.0, 1.0, 1.0);
 
-    let mut test_canvas = Canvas::new(720, 720);
-    for x in 0..240 {
-        for y in 0..720 {
-            test_canvas.write_pixel(x, y, [1.0, 0.0, 0.0])
-        }
-    }
-    for x in 240..480 {
-        for y in 0..720 {
-            test_canvas.write_pixel(x, y, [0.0, 1.0, 0.0])
-        }
-    }
-    for x in 480..720 {
-        for y in 0..720 {
-            test_canvas.write_pixel(x, y, [0.0, 0.0, 1.0])
-        }
-    }
-    test_canvas.write_pixel(2, 8, [1.0, 1.0, 1.0]);
-    test_canvas.write_pixel(2, 2, [0.5, 0.5, 0.5]);
+    let mut projectile_canvas = Canvas::new(500, 500);
 
-    println!("Pixel: {:?}", &test_canvas.pixels[2][8]);
+    let env = Env::new(0.050, 0.0);
+    let starting_position = Matrix1x4::new(0.0, 0.0, 0.0, 1.0);
+    let starting_velocity = Matrix1x4::new(3.5, 3.5, 0.0, 1.0);
+    let trajectory = tests::launch(projectile_canvas, env, starting_position, starting_velocity);
 
-    export::save_png("test_png.png", test_canvas);
+
+    // projectile_canvas.write_pixel(2, 8, [1.0, 1.0, 1.0]);
+
+
+    export::save_png("projectile.png", trajectory);
 }

@@ -1,7 +1,5 @@
 use nalgebra::{Matrix1x3, Matrix1x4};
-// pub type point = [f32; 3];
 pub type point = Matrix1x4<f32>;
-// pub type vector = [f32; 4];
 pub type vector = Matrix1x4<f32>;
 pub type color = [f32; 3];
 pub struct Canvas {
@@ -11,7 +9,7 @@ pub struct Canvas {
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Self {
         Self {
-            pixels: vec![vec![[0.0,0.0,0.0]; height]; width],
+            pixels: vec![vec![[0.0, 0.0, 0.0]; height]; width],
         }
     }
 }
@@ -43,4 +41,22 @@ impl Vector {
             dir: [x, y, z, 0.0],
         }
     }
+}
+
+pub struct Env {
+    pub gravity: Matrix1x4<f32>,
+    pub wind: Matrix1x4<f32>
+}
+impl Env {
+    pub fn new(g: f32, w: f32) -> Self {
+        Self {
+            gravity: Matrix1x4::new(0.0, -g, 0.0, 0.0),
+            wind: Matrix1x4::new(-w, 0.0, 0.0, 0.0)
+        }
+    }
+}
+
+pub struct Projectile {
+    pub position: Matrix1x4<f32>,
+    pub velocity: Matrix1x4<f32>
 }

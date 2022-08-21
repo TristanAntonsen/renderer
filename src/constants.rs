@@ -1,33 +1,37 @@
-use nalgebra::{Matrix1x3,Matrix1x4};
+use nalgebra::{Matrix1x3, Matrix1x4};
 // pub type point = [f32; 3];
 pub type point = Matrix1x4<f32>;
 // pub type vector = [f32; 4];
 pub type vector = Matrix1x4<f32>;
 
 pub struct Canvas {
-    pub pixels: Vec<Vec<f32>>
+    pub pixels: Vec<Vec<f32>>,
 }
 
-
+impl Canvas {
+    pub fn new(width: usize, height: usize) -> Self {
+        Self {
+            pixels: vec![vec![0.0; height]; width],
+        }
+    }
+}
 pub struct Color {
     pub r: f32,
     pub g: f32,
-    pub b: f32
+    pub b: f32,
 }
 pub struct Point {
-    pub pos: [f32; 4]
+    pub pos: [f32; 4],
 }
 
 pub struct Vector {
-    pub dir: [f32; 4]
+    pub dir: [f32; 4],
 }
 
 impl Point {
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self {
-            pos: [
-                x, y, z, 1.0
-            ]
+            pos: [x, y, z, 1.0],
         }
     }
 }
@@ -35,9 +39,7 @@ impl Point {
 impl Vector {
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self {
-            dir: [
-                x, y, z, 0.0
-            ]
+            dir: [x, y, z, 0.0],
         }
     }
 }

@@ -2,7 +2,7 @@ use nalgebra::{Matrix1x4,Matrix4x1, Matrix4};
 use crate::Canvas;
 use crate::Env;
 use crate::Projectile;
-use crate::constants::point;
+use crate::constants::Ray;
 use std::f64::consts::PI;
 
 pub fn is_point(tuple: Matrix1x4<f32>) -> bool {
@@ -17,6 +17,13 @@ pub fn is_vector(tuple: Matrix1x4<f32>) -> bool {
         0.0 => return true,
         _ => return false
     }
+}
+
+pub fn position(mut ray: &Ray, t: f32) -> Matrix1x4<f32> {
+    let mut result =  ray.origin + ray.direction * t;
+    result[3] = 0.0;
+
+    return result
 }
 
 pub fn clock(mut canvas: Canvas) -> Canvas{
@@ -69,6 +76,7 @@ pub fn clock(mut canvas: Canvas) -> Canvas{
     return canvas
 
 }
+
 
 
 pub fn launch(mut canvas: Canvas, env: Env, position: Matrix1x4<f32>, velocity: Matrix1x4<f32>) -> Canvas {

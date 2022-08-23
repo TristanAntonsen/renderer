@@ -19,12 +19,6 @@ pub fn is_vector(tuple: Matrix1x4<f32>) -> bool {
     }
 }
 
-pub fn position(mut ray: &Ray, t: f32) -> Matrix1x4<f32> {
-    let mut result =  ray.origin + ray.direction * t;
-    result[3] = 0.0;
-
-    return result
-}
 
 pub fn clock(mut canvas: Canvas) -> Canvas{
 

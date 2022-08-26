@@ -1,7 +1,14 @@
-use nalgebra::{Matrix1x3, Matrix1x4};
-pub type point = Matrix1x4<f32>;
-pub type vector = Matrix1x4<f32>;
+use nalgebra::{Matrix1x4};
 pub type color = [f32; 3];
+
+
+
+pub struct Sphere {
+    pub origin: Matrix1x4<f32>,
+    pub radius: f32
+}
+
+
 pub struct Canvas {
     pub pixels: Vec<Vec<color>>,
 }
@@ -25,6 +32,11 @@ pub struct Point {
 
 pub struct Vector {
     pub dir: [f32; 4],
+}
+
+pub struct Ray {
+    pub origin: Matrix1x4<f32>,
+    pub direction: Matrix1x4<f32>
 }
 
 impl Point {

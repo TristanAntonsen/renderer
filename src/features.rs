@@ -7,11 +7,16 @@ pub fn position(mut ray: &Ray, t: &f32) -> Matrix1x4<f32> {
 
     return result;
 }
+
 #[derive(Debug)] //automatically implementing traits
 pub struct intersection<'a> {
-    t: f32,
-    object: &'a Sphere,
+    pub t: f32,
+    pub object: &'a Sphere,
 }
+pub struct intersections {
+    
+}
+
 
 impl<'a> intersection<'a> {
     pub fn from_components(t: f32, object: &'a Sphere) -> Self {

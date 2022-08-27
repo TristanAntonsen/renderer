@@ -28,5 +28,10 @@ fn main() {
     
     let t1 = i1.0; //first t value of intersection
     let p1 = position(&ray, &t1);
-    println!("{:?}",p1);
+
+    let i1 = intersection::from_components(t1, &sphere);
+
+    println!("{:?}\n",i1);
+    println!("t value: {:?}\n",i1.t);
+    println!("object: {:?}",i1.object);
 }

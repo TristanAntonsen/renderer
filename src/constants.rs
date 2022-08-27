@@ -2,6 +2,7 @@ use nalgebra::{Matrix1x4};
 pub type color = [f32; 3];
 
 
+#[derive(Debug)] //automatically implementing traits
 
 pub struct Sphere {
     pub origin: Matrix1x4<f32>,

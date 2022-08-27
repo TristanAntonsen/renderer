@@ -64,6 +64,11 @@ impl<'a> Intersection<'a> {
             object: object, //original object
         }
     }
+
+    pub fn min(&self) -> f32 {
+        f32::min(self.t1, self.t2)
+    }
+
 }
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere

@@ -10,11 +10,11 @@ extern crate image;
 
 fn main() {
 
-    let ray2 = Ray {
+    let ray1 = Ray {
         origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
         direction: Matrix1x4::new(1.0, 0.0, 0.0, 0.0)
     };
-    let ray1 = Ray {
+    let ray2 = Ray {
         origin: Matrix1x4::new(0.0, 0.25, 0.0, 1.0),
         direction: Matrix1x4::new(1.0, 0.0, 0.0, 0.0)
     };
@@ -26,6 +26,7 @@ fn main() {
     };
     
     let test_intersection_1 = Intersection::new(&ray1, &sphere);
+    println!("Intersection 1 min t: {}",&test_intersection_1.min());
     let test_intersection_2 = Intersection::new(&ray1, &sphere);
     let mut collection = Intersections {all: Vec::new()};
     collection.add(test_intersection_1);
@@ -33,7 +34,6 @@ fn main() {
 
 
     let h = collection.hit();
-
     println!("Hit: {}",&h.t1);
     println!("Hit: {:?}",&h.object);
 

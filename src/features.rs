@@ -13,8 +13,14 @@ pub struct intersection<'a> {
     pub t: f32,
     pub object: &'a Sphere,
 }
-pub struct intersections {
-    
+pub struct intersections<'a> {
+    pub all: Vec<intersection<'a>>,
+}
+
+impl<'a> intersections<'a> {
+    pub fn add(&mut self, i: intersection<'a>) {
+        self.all.push(i);
+    }
 }
 
 

@@ -19,15 +19,14 @@ fn main() {
         origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
         radius: 1.0
     };
-    let mut intersections: Vec<(f32, f32)> = Vec::new();
-    let mut t1: f32;
+    let mut i1: (f32, f32) = (0.0,0.0); //initializing with zero
     match sphere_intersection(&ray, &sphere) {
-        Some(t) => intersections.push(t),
+        Some(t) => i1 = t,
         None => println!("No intersection.")
     };
     ray.origin[1] = 5.0;
     
-    let t1 = intersections[0].0;
+    let t1 = i1.0; //first t value of intersection
     let p1 = position(&ray, &t1);
     println!("{:?}",p1);
 }

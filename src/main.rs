@@ -15,22 +15,21 @@ fn main() {
         direction: Matrix1x4::new(1.0, 0.0, 0.0, 0.0)
     };
 
-    let ray_pos = position(&ray, 5.0);
     let sphere = Sphere {
         origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
         radius: 1.0
     };
-
-    ray.origin[1] = 5.0;
-    
     let mut intersections: Vec<(f32, f32)> = Vec::new();
     
-    let mut result = sphere_intersection(&ray, &sphere);
+    match sphere_intersection(&ray, &sphere) {
+        Some(t) => intersections.push(t),
+        None => println!("No intersection.")
+    };
+    ray.origin[1] = 5.0;
+
+    match sphere_intersection(&ray, &sphere) {
+        Some(t) => intersections.push(t),
+        None => println!("No intersection.") //can also be None => ()
+    };
     
-    match result {
-        Some(x) => intersections.push(x),
-        None => println!("No intersection found.")
-    }
-    println!("Intersections: {:?}",intersections);
-    // ray.origin[1] = 5.0;
 }

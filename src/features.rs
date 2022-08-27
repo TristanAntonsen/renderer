@@ -25,12 +25,14 @@ impl<'a> Intersections<'a> {
     // function to determine minimum non-negative t value. May need this to be a separate function
     pub fn hit(&mut self) -> &Intersection {
         let count = self.all.len();
-        let t_vals = self.all.iter().map(|i| i.t1);
-        let mut min_t = self.all[0].t1;
+        let t_vals: Vec<f32> = self.all.iter().map(|i| i.min_positive()).collect(); //collect min pos t vals
+        let mut min_t = t_vals[0]; //arbitrarily choose first out of all min pos t vals
         let mut min_index = 0;
+        let mut t_tmp: f32;
         for i in 0..count {
-            if self.all[i].t1 < min_t {
-                min_t = self.all[i].t1;;
+            t_tmp = self.all[i].min_positive(); // minimum t value of current intersection
+            if t_tmp < min_t {
+                min_t = t_tmp;
                 min_index = i;
             }
         }
@@ -65,10 +67,14 @@ impl<'a> Intersection<'a> {
         }
     }
 
-    pub fn min(&self) -> f32 {
-        f32::min(self.t1, self.t2)
+    pub fn min_positive(&self) -> f32 { //return minimum non-zero of two t vals
+        let t = f32::min(self.t1, self.t2);
+        if t >= 0.0 {
+            t
+        } else {
+            f32::max(self.t1, self.t2)
+        }
     }
-
 }
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere

@@ -26,7 +26,7 @@ fn main() {
     };
     
     let test_intersection_1 = Intersection::new(&ray1, &sphere);
-    println!("Intersection 1 min t: {}",&test_intersection_1.min());
+    println!("Intersection 1 min t: {}",&test_intersection_1.min_positive());
     let test_intersection_2 = Intersection::new(&ray1, &sphere);
     let mut collection = Intersections {all: Vec::new()};
     collection.add(test_intersection_1);
@@ -34,7 +34,7 @@ fn main() {
 
 
     let h = collection.hit();
-    println!("Hit: {}",&h.t1);
+    println!("Hit: {}",&h.min_positive());
     println!("Hit: {:?}",&h.object);
 
 }

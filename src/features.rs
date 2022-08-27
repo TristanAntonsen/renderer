@@ -35,6 +35,18 @@ impl<'a> Intersection<'a> {
             object: object,
         }
     }
+    // need a function to create an intersection from a ray and object
+    pub fn new(ray: &Ray, object: &'a Sphere) -> Self{
+        let mut i: (f32, f32) = (0.0,0.0); //initializing with zero
+        match sphere_intersection(&ray, &object) { //intersect with sphere (generalize later)
+            Some(t) => i = t,
+            None => ()
+        };
+        Self {
+            t: i.0, //first t value
+            object: object, //original object
+        }
+    }
 }
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere

@@ -19,20 +19,10 @@ fn main() {
         origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
         radius: 1.0
     };
-    let mut i1: (f32, f32) = (0.0,0.0); //initializing with zero
-    match sphere_intersection(&ray, &sphere) {
-        Some(t) => i1 = t,
-        None => println!("No intersection.")
-    };
-    ray.origin[1] = 5.0;
+    // ray.origin[1] = 5.0; //won't intersect
     
-    let t1 = i1.0; //first t value of intersection
-    let p1 = position(&ray, &t1);
+    let test_intersection = Intersection::new(&ray, &sphere);
 
-    let i1 = Intersection::from_components(t1, &sphere);
-    let mut is = Intersections{all: Vec::new()};
-
-    is.add(i1);
-
-    println!("{:?}",is.all[0].t);
+    println!("{:?}",test_intersection);
+    
 }

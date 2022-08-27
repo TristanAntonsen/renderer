@@ -1,14 +1,12 @@
 use nalgebra::{Matrix1x4};
 pub type color = [f32; 3];
 
-
+// struct for Sphere object used for calculating intersections
 #[derive(Debug)] //automatically implementing traits
-
 pub struct Sphere {
     pub origin: Matrix1x4<f32>,
     pub radius: f32
 }
-
 
 pub struct Canvas {
     pub pixels: Vec<Vec<color>>,
@@ -20,17 +18,16 @@ impl Canvas {
             pixels: vec![vec![[0.0, 0.0, 0.0]; height]; width],
         }
     }
-}
-
-impl Canvas {
     pub fn write_pixel(&mut self, x: usize, y: usize, color: color) {
         self.pixels[x][y] = color
     }
 }
+//assumes form of [x,y,z,1] (w = 1 means Point)
 pub struct Point {
     pub pos: [f32; 4],
 }
 
+//assumes form of [i,j,k,1] (w = 0 means Vector)
 pub struct Vector {
     pub dir: [f32; 4],
 }
@@ -67,9 +64,4 @@ impl Env {
             wind: Matrix1x4::new(-w, 0.0, 0.0, 0.0)
         }
     }
-}
-
-pub struct Projectile {
-    pub position: Matrix1x4<f32>,
-    pub velocity: Matrix1x4<f32>
 }

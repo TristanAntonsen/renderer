@@ -13,6 +13,14 @@ pub struct intersection<'a> {
     object: &'a Sphere,
 }
 
+impl<'a> intersection<'a> {
+    pub fn from_components(t: f32, object: &'a Sphere) -> Self {
+        Self {
+            t: t,
+            object: object
+        }
+    }
+}
 
 pub fn sphere_intersection(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
     // vector from sphere origin to ray origin

@@ -22,7 +22,8 @@ fn main() {
     // ray.origin[1] = 5.0; //won't intersect
     
     let test_intersection = Intersection::new(&ray, &sphere);
-
-    println!("{:?}",test_intersection);
-    
+    println!("{:?}",&test_intersection);
+    let mut collection = Intersections {all: Vec::new()};
+    collection.add(test_intersection);
+    println!("{:?}",collection.all[0])
 }

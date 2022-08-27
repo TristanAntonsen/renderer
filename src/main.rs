@@ -10,20 +10,31 @@ extern crate image;
 
 fn main() {
 
-    let mut ray = Ray {
+    let ray2 = Ray {
         origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
         direction: Matrix1x4::new(1.0, 0.0, 0.0, 0.0)
     };
+    let ray1 = Ray {
+        origin: Matrix1x4::new(0.0, 0.25, 0.0, 1.0),
+        direction: Matrix1x4::new(1.0, 0.0, 0.0, 0.0)
+    };
+    // ray.origin[1] = 5.0; //won't intersect
 
     let sphere = Sphere {
         origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
         radius: 1.0
     };
-    // ray.origin[1] = 5.0; //won't intersect
     
-    let test_intersection = Intersection::new(&ray, &sphere);
-    println!("{:?}",&test_intersection);
+    let test_intersection_1 = Intersection::new(&ray1, &sphere);
+    let test_intersection_2 = Intersection::new(&ray1, &sphere);
     let mut collection = Intersections {all: Vec::new()};
-    collection.add(test_intersection);
-    println!("{:?}",collection.all[0])
+    collection.add(test_intersection_1);
+    collection.add(test_intersection_2);
+
+
+    let h = collection.hit();
+
+    println!("Hit: {}",&h.t);
+    println!("Hit: {:?}",&h.object);
+
 }

@@ -21,6 +21,20 @@ pub struct Intersections<'a> {
 }
 
 impl<'a> Intersections<'a> {
+    // function to determine minimum non-negative t value. May need this to be a separate function
+    pub fn hit(&mut self) -> &Intersection {
+        let count = self.all.len();
+        let t_vals = self.all.iter().map(|i| i.t);
+        let mut min_t = self.all[0].t;
+        let mut min_index = 0;
+        for i in 0..count {
+            if self.all[i].t < min_t {
+                min_t = self.all[i].t;;
+                min_index = i;
+            }
+        }
+        &self.all[min_index]
+    }
     // adding a new Intersection to Intersections
     pub fn add(&mut self, i: Intersection<'a>) {
         self.all.push(i);

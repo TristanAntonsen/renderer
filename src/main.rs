@@ -26,15 +26,15 @@ fn main() {
     };
     
     let test_intersection_1 = Intersection::new(&ray1, &sphere);
-    println!("Intersection 1 min t: {}",&test_intersection_1.min_positive());
-    let test_intersection_2 = Intersection::new(&ray1, &sphere);
+    let test_intersection_2 = Intersection::new(&ray2, &sphere);
+    println!("Intersection 1 min t: {}",&test_intersection_2.closest_to_zero());
     let mut collection = Intersections {all: Vec::new()};
     collection.add(test_intersection_1);
     collection.add(test_intersection_2);
 
 
     let h = collection.hit();
-    println!("Hit: {}",&h.min_positive());
+    println!("Hit: {}",&h.closest_to_zero());
     println!("Hit: {:?}",&h.object);
 
 }

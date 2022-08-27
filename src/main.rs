@@ -34,7 +34,7 @@ fn main() {
 
     let h = collection.hit();
 
-    println!("Hit: {}",&h.t);
+    println!("Hit: {}",&h.t1);
     println!("Hit: {:?}",&h.object);
 
 }

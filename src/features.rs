@@ -1,6 +1,6 @@
 use crate::constants::{Ray, Sphere};
 use nalgebra::{Matrix1x4, Matrix4, Matrix4x1};
-
+use std::cmp::min;
 // Calculating the position of an intersection (from distance t along a ray)
 pub fn position(mut ray: &Ray, t: &f32) -> Matrix1x4<f32> {
     let mut result = ray.origin + ray.direction * *t; //dereference t?
@@ -11,7 +11,8 @@ pub fn position(mut ray: &Ray, t: &f32) -> Matrix1x4<f32> {
 // Struct containing the t value (distance along ray) and the object the ray is intersecting
 #[derive(Debug)] //automatically implementing traits
 pub struct Intersection<'a> {
-    pub t: f32,
+    pub t1: f32,
+    pub t2: f32,
     pub object: &'a Sphere,
 }
 
@@ -24,12 +25,12 @@ impl<'a> Intersections<'a> {
     // function to determine minimum non-negative t value. May need this to be a separate function
     pub fn hit(&mut self) -> &Intersection {
         let count = self.all.len();
-        let t_vals = self.all.iter().map(|i| i.t);
-        let mut min_t = self.all[0].t;
+        let t_vals = self.all.iter().map(|i| i.t1);
+        let mut min_t = self.all[0].t1;
         let mut min_index = 0;
         for i in 0..count {
-            if self.all[i].t < min_t {
-                min_t = self.all[i].t;;
+            if self.all[i].t1 < min_t {
+                min_t = self.all[i].t1;;
                 min_index = i;
             }
         }
@@ -43,9 +44,10 @@ impl<'a> Intersections<'a> {
 
 impl<'a> Intersection<'a> {
     // creating a new intersection from t and the object (sphere for now)
-    pub fn from_components(t: f32, object: &'a Sphere) -> Self {
+    pub fn from_components(t1: f32,t2: f32, object: &'a Sphere) -> Self {
         Self {
-            t: t,
+            t1: t1,
+            t2: t2,
             object: object,
         }
     }
@@ -57,7 +59,8 @@ impl<'a> Intersection<'a> {
             None => ()
         };
         Self {
-            t: i.0, //first t value
+            t1: i.0, //first t value
+            t2: i.1, //second t value
             object: object, //original object
         }
     }

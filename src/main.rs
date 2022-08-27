@@ -20,15 +20,17 @@ fn main() {
         origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
         radius: 1.0
     };
-    match sphere_intersection(&ray, &sphere) {
-        Some(x) => println!("{:?}",x),
-        None => println!("No intersection!")
-    }
-    
+
     ray.origin[1] = 5.0;
     
-    match sphere_intersection(&ray, &sphere) {
-        Some(x) => println!("{:?}",x),
-        None => println!("No intersection!")
+    let mut intersections: Vec<(f32, f32)> = Vec::new();
+    
+    let mut result = sphere_intersection(&ray, &sphere);
+    
+    match result {
+        Some(x) => intersections.push(x),
+        None => println!("No intersection found.")
     }
+    println!("Intersections: {:?}",intersections);
+    // ray.origin[1] = 5.0;
 }

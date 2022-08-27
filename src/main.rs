@@ -4,7 +4,7 @@ mod export;
 mod features;
 use constants::{Canvas, Ray, Sphere};
 use nalgebra::{Matrix1x4};
-use features::{position, sphere_intersection, intersection, intersections};
+use features::{position, sphere_intersection, Intersection, Intersections};
 extern crate image;
 
 
@@ -29,8 +29,8 @@ fn main() {
     let t1 = i1.0; //first t value of intersection
     let p1 = position(&ray, &t1);
 
-    let i1 = intersection::from_components(t1, &sphere);
-    let mut is = intersections{all: Vec::new()};
+    let i1 = Intersection::from_components(t1, &sphere);
+    let mut is = Intersections{all: Vec::new()};
 
     is.add(i1);
 

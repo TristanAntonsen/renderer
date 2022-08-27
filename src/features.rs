@@ -9,22 +9,22 @@ pub fn position(mut ray: &Ray, t: &f32) -> Matrix1x4<f32> {
 }
 
 #[derive(Debug)] //automatically implementing traits
-pub struct intersection<'a> {
+pub struct Intersection<'a> {
     pub t: f32,
     pub object: &'a Sphere,
 }
-pub struct intersections<'a> {
-    pub all: Vec<intersection<'a>>,
+pub struct Intersections<'a> {
+    pub all: Vec<Intersection<'a>>,
 }
 
-impl<'a> intersections<'a> {
-    pub fn add(&mut self, i: intersection<'a>) {
+impl<'a> Intersections<'a> {
+    pub fn add(&mut self, i: Intersection<'a>) {
         self.all.push(i);
     }
 }
 
 
-impl<'a> intersection<'a> {
+impl<'a> Intersection<'a> {
     pub fn from_components(t: f32, object: &'a Sphere) -> Self {
         Self {
             t: t,

@@ -1,17 +1,17 @@
 use crate::constants::{Ray, Sphere};
 use nalgebra::{Matrix1x4, Matrix4, Matrix4x1};
 
-pub fn position(mut ray: &Ray, t: f32) -> Matrix1x4<f32> {
-    let mut result = ray.origin + ray.direction * t;
+pub fn position(mut ray: &Ray, t: &f32) -> Matrix1x4<f32> {
+    let mut result = ray.origin + ray.direction * *t; //dereference t?
     result[3] = 0.0; //point type
 
     return result;
 }
 
-// pub struct intersection<'a> {
-//     t: f32,
-//     object: &'a Sphere,
-// }
+pub struct intersection<'a> {
+    t: f32,
+    object: &'a Sphere,
+}
 
 
 pub fn sphere_intersection(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {

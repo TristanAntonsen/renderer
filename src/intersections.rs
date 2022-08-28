@@ -1,7 +1,7 @@
 use crate::constants::{Ray};
 use crate::geometry::{Sphere};
-
 use nalgebra::{Matrix1x4};
+
 // Calculating the position of an intersection (from distance t along a ray)
 pub fn _position(ray: &Ray, t: &f32) -> Matrix1x4<f32> {
     let mut result = ray.origin + ray.direction * *t; //dereference t?
@@ -9,6 +9,7 @@ pub fn _position(ray: &Ray, t: &f32) -> Matrix1x4<f32> {
 
     return result;
 }
+
 // Struct containing the t value (distance along ray) and the object the ray is intersecting
 #[derive(Debug)] //automatically implementing traits
 pub struct Intersection<'a> {
@@ -63,7 +64,7 @@ impl<'a> Intersection<'a> {
     // need a function to create an intersection from a ray and object
     pub fn new(ray: &Ray, object: &'a Sphere) -> Self{
         let mut i: (f32, f32) = (0.0,0.0); //initializing with zero
-        match _sphere_intersection(&ray, &object) { //intersect with sphere (generalize later)
+        match _intersect_sphere(&ray, &object) { //intersect with sphere (generalize later)
             Some(t) => i = t,
             None => ()
         };
@@ -80,7 +81,7 @@ impl<'a> Intersection<'a> {
 }
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
-pub fn _sphere_intersection(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
+pub fn _intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
     // vector from sphere origin to ray origin
     let sphere_to_ray = ray.origin - sphere.origin;
 

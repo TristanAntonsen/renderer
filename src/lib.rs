@@ -2,13 +2,13 @@ mod constants;
 mod features;
 #[cfg(test)]
 mod tests {
-    use crate::constants::{Point, Sphere, Ray};
+    use crate::constants::{_Point, Sphere, Ray};
     use crate::features::{Intersection};
     use nalgebra::Matrix1x4;
 
     #[test]
     fn test_point() {
-        let point = Point{pos: [0.0, 0.0, 0.0, 1.0]};
+        let point = _Point{pos: [0.0, 0.0, 0.0, 1.0]};
         assert_eq!(point.pos[3], 1.0);
     }
 

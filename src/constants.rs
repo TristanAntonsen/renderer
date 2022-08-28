@@ -23,12 +23,12 @@ impl Canvas {
     }
 }
 //assumes form of [x,y,z,1] (w = 1 means Point)
-pub struct Point {
+pub struct _Point {
     pub pos: [f32; 4],
 }
 
 //assumes form of [i,j,k,1] (w = 0 means Vector)
-pub struct Vector {
+pub struct _Vector {
     pub dir: [f32; 4],
 }
 
@@ -37,27 +37,27 @@ pub struct Ray {
     pub direction: Matrix1x4<f32>
 }
 
-impl Point {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
+impl _Point {
+    pub fn _new(x: f32, y: f32, z: f32) -> Self {
         Self {
             pos: [x, y, z, 1.0],
         }
     }
 }
 
-impl Vector {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
+impl _Vector {
+    pub fn _new(x: f32, y: f32, z: f32) -> Self {
         Self {
             dir: [x, y, z, 0.0],
         }
     }
 }
 
-pub struct Env {
+pub struct _Env {
     pub gravity: Matrix1x4<f32>,
     pub wind: Matrix1x4<f32>
 }
-impl Env {
+impl _Env {
     pub fn new(g: f32, w: f32) -> Self {
         Self {
             gravity: Matrix1x4::new(0.0, -g, 0.0, 0.0),

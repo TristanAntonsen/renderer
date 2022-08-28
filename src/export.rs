@@ -1,9 +1,10 @@
+#[allow(unused_imports)]
 use std::fs;
 use crate::Canvas;
 extern crate image;
-use image::{ImageBuffer, Rgb, RgbImage};
+use image::{Rgb, RgbImage};
 
-pub fn save_ppm(path: &str, canvas: Canvas) {
+pub fn _save_ppm(path: &str, canvas: Canvas) {
     let mut data: String = "".to_string();
     let width = canvas.pixels.len().to_string();
     let height = canvas.pixels[0].len().to_string();
@@ -32,7 +33,7 @@ pub fn save_ppm(path: &str, canvas: Canvas) {
 
 }
 
-pub fn save_png(path: &str, canvas: Canvas) {
+pub fn _save_png(path: &str, canvas: Canvas) {
     let width = canvas.pixels.len() as u32;
     let height = canvas.pixels[0].len() as u32;
 

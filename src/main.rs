@@ -1,12 +1,12 @@
 use std::fs;
 mod constants;
 mod export;
-mod features;
+mod intersections;
 mod geometry;
 use constants::{Canvas, Ray};
 use geometry::Sphere;
 use nalgebra::{Matrix1x4};
-use features::{Intersection, Intersections};
+use intersections::{Intersection, Intersections};
 extern crate image;
 
 

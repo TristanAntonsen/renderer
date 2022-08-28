@@ -7,7 +7,6 @@ pub struct Sphere {
     pub radius: f32
 }
 
-
 //assumes form of [x,y,z,1] (w = 1 means Point)
 pub struct _Point {
     pub pos: [f32; 4],

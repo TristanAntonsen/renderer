@@ -1,8 +1,9 @@
-use crate::constants::{Ray, Sphere};
-use nalgebra::{Matrix1x4, Matrix4, Matrix4x1};
-use std::cmp::min;
+use crate::constants::{Ray};
+use crate::geometry::{Sphere};
+
+use nalgebra::{Matrix1x4};
 // Calculating the position of an intersection (from distance t along a ray)
-pub fn position(mut ray: &Ray, t: &f32) -> Matrix1x4<f32> {
+pub fn _position(ray: &Ray, t: &f32) -> Matrix1x4<f32> {
     let mut result = ray.origin + ray.direction * *t; //dereference t?
     result[3] = 0.0; //point type
 
@@ -23,20 +24,26 @@ pub struct Intersections<'a> {
 
 impl<'a> Intersections<'a> {
     // function to determine minimum non-negative t value. May need this to be a separate function
-    pub fn hit(&mut self) -> &Intersection {
+    pub fn hit(&mut self) -> Option<&Intersection> {
         let count = self.all.len();
-        let t_vals: Vec<f32> = self.all.iter().map(|i| i.closest_to_zero()).collect(); //collect min pos t vals
+        let t_vals: Vec<f32> = self.all.iter().map(|i| i._closest_to_zero()).collect(); //collect min pos t vals
         let mut min_t = t_vals[0]; //arbitrarily choose first out of all min pos t vals
         let mut min_index = 0;
         let mut t_tmp: f32;
         for i in 0..count {
-            t_tmp = self.all[i].closest_to_zero(); // minimum t value of current intersection
+            t_tmp = self.all[i]._closest_to_zero(); // minimum t value of current intersection
             if t_tmp < min_t {
                 min_t = t_tmp;
                 min_index = i;
             }
         }
-        &self.all[min_index]
+        
+        if min_t < 0.0 {
+            return None
+        }
+
+        Some(&self.all[min_index])
+        
     }
     // adding a new Intersection to Intersections
     pub fn add(&mut self, i: Intersection<'a>) {
@@ -46,7 +53,7 @@ impl<'a> Intersections<'a> {
 
 impl<'a> Intersection<'a> {
     // creating a new intersection from t and the object (sphere for now)
-    pub fn from_components(t1: f32,t2: f32, object: &'a Sphere) -> Self {
+    pub fn _from_components(t1: f32,t2: f32, object: &'a Sphere) -> Self {
         Self {
             t1: t1,
             t2: t2,
@@ -56,7 +63,7 @@ impl<'a> Intersection<'a> {
     // need a function to create an intersection from a ray and object
     pub fn new(ray: &Ray, object: &'a Sphere) -> Self{
         let mut i: (f32, f32) = (0.0,0.0); //initializing with zero
-        match sphere_intersection(&ray, &object) { //intersect with sphere (generalize later)
+        match _sphere_intersection(&ray, &object) { //intersect with sphere (generalize later)
             Some(t) => i = t,
             None => ()
         };
@@ -67,13 +74,13 @@ impl<'a> Intersection<'a> {
         }
     }
 
-    pub fn closest_to_zero(&self) -> f32 { //return closest t value to zero (handle negative logic elsewhere)
+    pub fn _closest_to_zero(&self) -> f32 { //return closest t value to zero (handle negative logic elsewhere)
         f32::min(self.t1.abs(), self.t2.abs())
     }
 }
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
-pub fn sphere_intersection(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
+pub fn _sphere_intersection(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
     // vector from sphere origin to ray origin
     let sphere_to_ray = ray.origin - sphere.origin;
 

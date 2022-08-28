@@ -1,8 +1,10 @@
 mod constants;
+mod geometry;
 mod features;
 #[cfg(test)]
 mod tests {
-    use crate::constants::{_Point, Sphere, Ray};
+    use crate::geometry::{_Point, Sphere};
+    use crate::constants::Ray;
     use crate::features::{Intersection};
     use nalgebra::Matrix1x4;
 

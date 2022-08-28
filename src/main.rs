@@ -1,9 +1,10 @@
-#[allow(unused_imports)]
 use std::fs;
 mod constants;
 mod export;
 mod features;
-use constants::{Canvas, Ray, Sphere};
+mod geometry;
+use constants::{Canvas, Ray};
+use geometry::Sphere;
 use nalgebra::{Matrix1x4};
 use features::{Intersection, Intersections};
 extern crate image;

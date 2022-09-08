@@ -23,7 +23,7 @@ fn main() {
     // ray.origin[1] = 5.0; //won't intersect
 
     let sphere = Sphere {
-        origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0), // sphere with radius 1 centered on origin
+        origin: Matrix1x4::new(1.1, 0.0, 0.0, 1.0), // sphere with radius 1 centered on origin
         radius: 1.0
     };
     
@@ -33,12 +33,14 @@ fn main() {
     let i4 = Intersection::new(-0.1, &sphere);
     let i5 = Intersection::new(0.0, &sphere);
 
-    println!("{},{:?}",i1.t, i1.object);
-    println!("{},{:?}",i2.t, i2.object);
+    let mut intersections = Intersections::collect(vec![i1, i3, i2, i4, i5]);
 
-    println!("{:?}",i1);
 
-    let intersections = Intersections::collect(vec![i1, i2, i3, i4, i5]);
+    if let Some(i) = intersect_sphere(&ray1, &sphere) {
+        intersections.collection.push(Intersection::new(i.0, &sphere))
+    }
+
+
 
     for i in &intersections.collection {
         println!("{:?}",i)

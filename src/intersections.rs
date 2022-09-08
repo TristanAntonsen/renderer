@@ -1,10 +1,23 @@
 use crate::constants::Ray;
 use crate::geometry::Sphere;
 use nalgebra::{min, Matrix1x4};
+use std::fmt;
 
+// intersections structure for aggregating intersections & performing methods
 
-// intersections structure for aggregating t values and objects at intersections
+pub struct Intersections<'a> {
+    pub collection: Vec<Intersection<'a>>
+}
 
+impl<'a> Intersections<'a> {
+    pub fn collect(ints: Vec<Intersection<'a>>) -> Self {
+        Self {
+            collection: ints
+        }
+    }   
+}
+
+// intersection structure for t and object for given intersection
 pub struct Intersection<'a> {
     pub t : f32,
     pub object: &'a Sphere // object must outlive Intersection
@@ -18,6 +31,8 @@ impl<'a> Intersection<'a> { //trait must also outlive Intersection
         }
     }
 }
+
+
 
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
@@ -39,4 +54,13 @@ pub fn intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
     let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
 
     Some((t1, t2))
+}
+
+
+// ------- Display/Debug --------
+
+impl<'a> fmt::Debug for Intersection<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "t: {}, object: {:?}", self.t, self.object)
+    }
 }

@@ -3,7 +3,7 @@ mod export;
 mod intersections;
 mod geometry;
 
-use intersections::{Intersection,intersect_sphere};
+use intersections::{Intersection,Intersections,intersect_sphere};
 use constants::{Canvas, Ray};
 use geometry::Sphere;
 use nalgebra::{Matrix1x4};
@@ -30,8 +30,14 @@ fn main() {
     let intersection1 = Intersection::new(0.4, &sphere);
     let intersection2 = Intersection::new(0.6, &sphere);
 
-
     println!("{},{:?}",intersection1.t, intersection1.object);
     println!("{},{:?}",intersection2.t, intersection2.object);
 
+    println!("{:?}",intersection1);
+
+    let intersections = Intersections::collect(vec![intersection1, intersection2]);
+
+    for i in intersections.collection {
+        println!("{:?}",i)
+    }
 }

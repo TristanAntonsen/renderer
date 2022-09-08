@@ -1,7 +1,6 @@
 use nalgebra::{Matrix1x4};
 pub type color = [f32; 3];
 
-
 pub struct Canvas {
     pub pixels: Vec<Vec<color>>,
 }
@@ -16,12 +15,6 @@ impl Canvas {
         self.pixels[x][y] = color
     }
 }
-pub struct Ray {
-    pub origin: Matrix1x4<f32>,
-    pub direction: Matrix1x4<f32>
-}
-
-
 pub struct _Env {
     pub gravity: Matrix1x4<f32>,
     pub wind: Matrix1x4<f32>

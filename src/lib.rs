@@ -1,11 +1,13 @@
 mod constants;
 mod geometry;
 mod intersections;
+mod ray;
+
 #[cfg(test)]
 mod tests {
     use crate::geometry::{_Point, Sphere};
-    use crate::constants::Ray;
-    use crate::intersections::{Intersection};
+    use crate::ray::Ray;
+    // use crate::intersections::{Intersection};
     use nalgebra::Matrix1x4;
 
     #[test]
@@ -14,19 +16,19 @@ mod tests {
         assert_eq!(point.pos[3], 1.0);
     }
 
-    #[test]
-    fn test_intersection() { //not sure if this is helpful
-        let ray = Ray {
-            origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
-            direction: Matrix1x4::new(1.0, 0.0, 0.0, 0.0)
-        };
-        let sphere = Sphere {
-            origin: Matrix1x4::new(5.0, 0.0, 0.0, 1.0),
-            radius: 1.0
-        };
-        let i1 = Intersection::new(&ray, &sphere);
+    // #[test]
+    // fn test_intersection() { //not sure if this is helpful
+    //     let ray = Ray {
+    //         origin: Matrix1x4::new(0.0, 0.0, 0.0, 1.0),
+    //         direction: Matrix1x4::new(1.0, 0.0, 0.0, 0.0)
+    //     };
+    //     let sphere = Sphere {
+    //         origin: Matrix1x4::new(5.0, 0.0, 0.0, 1.0),
+    //         radius: 1.0
+    //     };
+    //     let i1 = Intersection::new(&ray, &sphere);
 
-        assert_eq!(i1.object.origin, sphere.origin);
-    }
+    //     assert_eq!(i1.object.origin, sphere.origin);
+    // }
 
 }

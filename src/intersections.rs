@@ -1,5 +1,5 @@
-use crate::constants::Ray;
 use crate::geometry::Sphere;
+use crate::ray::Ray;
 use nalgebra::{min, Matrix1x4};
 use std::fmt;
 

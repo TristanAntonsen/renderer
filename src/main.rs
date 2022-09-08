@@ -2,9 +2,11 @@ mod constants;
 mod export;
 mod intersections;
 mod geometry;
+mod ray;
 
 use intersections::{Intersection,Intersections,intersect_sphere};
-use constants::{Canvas, Ray};
+use constants::{Canvas};
+use ray::Ray;
 use geometry::Sphere;
 use nalgebra::{Matrix1x4};
 extern crate image;

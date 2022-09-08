@@ -2,10 +2,11 @@ mod constants;
 mod export;
 mod intersections;
 mod geometry;
+
+use intersections::{Intersection,intersect_sphere};
 use constants::{Canvas, Ray};
 use geometry::Sphere;
 use nalgebra::{Matrix1x4};
-use intersections::{Intersection, Intersections};
 extern crate image;
 
 
@@ -26,22 +27,11 @@ fn main() {
         radius: 1.0
     };
     
-    let test_intersection_1 = Intersection::new(&ray1, &sphere); 
-    let test_intersection_2 = Intersection::new(&ray2, &sphere);
+    let intersection1 = Intersection::new(0.4, &sphere);
+    let intersection2 = Intersection::new(0.6, &sphere);
 
-    let mut collection = Intersections {all: Vec::new()};
-    collection.add(test_intersection_1);
-    collection.add(test_intersection_2);
 
-    for int in &collection.all {
-        println!("Object origin: {:}",&int.object.origin);
-        println!("t values: {}, {}\n",&int.t1, &int.t2);
-    }
+    println!("{},{:?}",intersection1.t, intersection1.object);
+    println!("{},{:?}",intersection2.t, intersection2.object);
 
-    let h = collection.hit();
-    // println!("Hit: {:?}",&h.object);
-    match h {
-        Some(x) => println!("Hit: {}",&x._closest_to_zero()),
-        None => println!("No non-zero t values.")
-    }
 }

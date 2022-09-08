@@ -3,6 +3,23 @@ use crate::geometry::Sphere;
 use nalgebra::{min, Matrix1x4};
 
 
+// intersections structure for aggregating t values and objects at intersections
+
+pub struct Intersection<'a> {
+    pub t : f32,
+    pub object: &'a Sphere // object must outlive Intersection
+}
+
+impl<'a> Intersection<'a> { //trait must also outlive Intersection
+    pub fn new(t: f32, s: &'a Sphere) -> Self {
+        Self {
+            t: t,
+            object: s
+        }
+    }
+}
+
+
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
 pub fn intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
     // vector from sphere origin to ray origin

@@ -29,8 +29,8 @@ fn main() {
     
     let i1 = Intersection::new(0.4, &sphere);
     let i2 = Intersection::new(0.6, &sphere);
-    let i3 = Intersection::new(-0.6, &sphere);
-    let i4 = Intersection::new(0.1, &sphere);
+    let i3 = Intersection::new(0.6, &sphere);
+    let i4 = Intersection::new(-0.1, &sphere);
     let i5 = Intersection::new(0.0, &sphere);
 
     println!("{},{:?}",i1.t, i1.object);
@@ -44,8 +44,8 @@ fn main() {
         println!("{:?}",i)
     }
 
-    if let h = intersections.hit() { // do this if h is Some(...)
-        println!("hit: {:?}",h.unwrap())
+    if let Some(h) = intersections.hit() { // do this if h is Some(...)
+        println!("hit: {:?}",h)
     }
 
 }

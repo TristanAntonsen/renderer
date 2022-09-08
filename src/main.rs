@@ -27,17 +27,25 @@ fn main() {
         radius: 1.0
     };
     
-    let intersection1 = Intersection::new(0.4, &sphere);
-    let intersection2 = Intersection::new(0.6, &sphere);
+    let i1 = Intersection::new(0.4, &sphere);
+    let i2 = Intersection::new(0.6, &sphere);
+    let i3 = Intersection::new(-0.6, &sphere);
+    let i4 = Intersection::new(0.1, &sphere);
+    let i5 = Intersection::new(0.0, &sphere);
 
-    println!("{},{:?}",intersection1.t, intersection1.object);
-    println!("{},{:?}",intersection2.t, intersection2.object);
+    println!("{},{:?}",i1.t, i1.object);
+    println!("{},{:?}",i2.t, i2.object);
 
-    println!("{:?}",intersection1);
+    println!("{:?}",i1);
 
-    let intersections = Intersections::collect(vec![intersection1, intersection2]);
+    let intersections = Intersections::collect(vec![i1, i2, i3, i4, i5]);
 
-    for i in intersections.collection {
+    for i in &intersections.collection {
         println!("{:?}",i)
     }
+
+    if let h = intersections.hit() { // do this if h is Some(...)
+        println!("hit: {:?}",h.unwrap())
+    }
+
 }

@@ -20,7 +20,7 @@ fn main() {
     };
 
     let mut sphere = Sphere::new(0.0, 0.0, 0.0, 1.0);
-    sphere.set_transform(scaling(2.0, 2.0, 2.0));
+    sphere.set_transform(translation(5.0, 0.0, 0.0));
     
 
     let mut intersections = Intersections{collection: Vec::new()};

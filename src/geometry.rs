@@ -1,9 +1,9 @@
-use nalgebra::{Matrix1x4};
+use nalgebra::{Matrix4x1};
 
 // struct for Sphere object used for calculating intersections
 #[derive(Debug)] //automatically implementing traits
 pub struct Sphere {
-    pub origin: Matrix1x4<f32>,
+    pub origin: Matrix4x1<f32>,
     pub radius: f32
 }
 

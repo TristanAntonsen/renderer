@@ -21,6 +21,10 @@ impl Sphere {
             )
         }
     }
+
+    pub fn set_transform(&mut self, transform: Matrix4<f32>) {
+        self.transform = transform
+    }
 }
 
 

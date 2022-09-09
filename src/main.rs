@@ -8,7 +8,7 @@ use intersections::{Intersection,Intersections,intersect_sphere};
 use constants::{Canvas};
 use ray::Ray;
 use geometry::Sphere;
-use nalgebra::{Matrix4x1};
+use nalgebra::{Matrix4x1, Matrix4};
 extern crate image;
 
 
@@ -31,7 +31,7 @@ fn main() {
     println!("Ray 3: {:?}",ray3.direction);
     // ray.origin[1] = 5.0; //won't intersect
 
-    let sphere = Sphere::new(1.1, 0.0, 0.0, 1.0);
+    let mut sphere = Sphere::new(1.1, 0.0, 0.0, 1.0);
     
     let i1 = Intersection::new(0.4, &sphere);
     let i2 = Intersection::new(0.6, &sphere);
@@ -53,6 +53,13 @@ fn main() {
         println!("hit: {:?}",h)
     }
 
+    println!("transform: {}",sphere.transform);
+    sphere.set_transform(Matrix4::new(
+        2.0, 0.0, 0.0, 1.0,
+        0.0, 1.0, 0.0, 1.0,
+        0.0, 0.0, 1.0, 1.0,
+        0.0, 0.0, 0.0, 1.0,
+    ));
     println!("transform: {}",sphere.transform);
 
 }

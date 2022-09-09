@@ -15,18 +15,20 @@ extern crate image;
 fn main() {
 
     let ray1 = Ray {
-        origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0), // ray centered on origin
-        direction: Matrix4x1::new(1.0, 0.0, 0.0, 0.0) // cast in X direction
+        origin: Matrix4x1::new(1.0, 2.0, 3.0, 1.0), // ray centered on origin
+        direction: Matrix4x1::new(0.0, 1.0, 0.0, 0.0) // cast in X direction
     };
     let ray2 = Ray {
         origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0), // ray centered on y = 0.25
         direction: Matrix4x1::new(1.0, 0.0, 0.0, 0.0) // cast in X direction
     };
 
-    let ray3 = &ray1.translate(1.0, 0.0, 1.0);
+    // let ray3 = &ray1.translate(3.0, 4.0, 5.0);
+    let ray3 = &ray1.scale(2.0, 3.0, 4.0);
 
     println!("Ray 1: {:?}",ray1.origin);
     println!("Ray 3: {:?}",ray3.origin);
+    println!("Ray 3: {:?}",ray3.direction);
     // ray.origin[1] = 5.0; //won't intersect
 
     let sphere = Sphere {

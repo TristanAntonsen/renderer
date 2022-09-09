@@ -1,11 +1,28 @@
-use nalgebra::{Matrix4x1};
+use nalgebra::{Matrix4x1, Matrix4};
 
 // struct for Sphere object used for calculating intersections
 #[derive(Debug)] //automatically implementing traits
 pub struct Sphere {
     pub origin: Matrix4x1<f32>,
-    pub radius: f32
+    pub radius: f32,
+    pub transform: Matrix4<f32>
 }
+
+impl Sphere {
+    pub fn new(x: f32, y: f32, z: f32, radius: f32) -> Self {
+        Self {
+            origin: Matrix4x1::new(x,y,z,1.0),
+            radius: radius,
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0,
+            )
+        }
+    }
+}
+
 
 //assumes form of [x,y,z,1] (w = 1 means Point)
 pub struct _Point {

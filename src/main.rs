@@ -31,10 +31,7 @@ fn main() {
     println!("Ray 3: {:?}",ray3.direction);
     // ray.origin[1] = 5.0; //won't intersect
 
-    let sphere = Sphere {
-        origin: Matrix4x1::new(1.1, 0.0, 0.0, 1.0), // sphere with radius 1 centered on origin
-        radius: 1.0
-    };
+    let sphere = Sphere::new(1.1, 0.0, 0.0, 1.0);
     
     let i1 = Intersection::new(0.4, &sphere);
     let i2 = Intersection::new(0.6, &sphere);
@@ -55,5 +52,7 @@ fn main() {
     if let Some(h) = intersections.hit() { // do this if h is Some(...)
         println!("hit: {:?}",h)
     }
+
+    println!("transform: {}",sphere.transform);
 
 }

@@ -57,11 +57,18 @@ impl<'a> Intersection<'a> { //trait must also outlive Intersection
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
 pub fn intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
-    // vector from sphere origin to ray origin
-    let sphere_to_ray = ray.origin - sphere.origin;
 
-    let a = &ray.direction.dot(&ray.direction);
-    let b = 2.0 * &ray.direction.dot(&sphere_to_ray);
+    // transform ray prior to calculation
+    // multiply by the inverse of sphere.transform
+    let transformation = sphere.transform.try_inverse().unwrap();
+
+    let new_ray = ray.transform(transformation);
+
+    // vector from sphere origin to ray origin
+    let sphere_to_ray = new_ray.origin - sphere.origin;
+
+    let a = &new_ray.direction.dot(&new_ray.direction);
+    let b = 2.0 * &new_ray.direction.dot(&sphere_to_ray);
     let c = &sphere_to_ray.dot(&sphere_to_ray) - 1.0;
 
     let discriminant = b.powf(2.0) - 4.0 * a * c;

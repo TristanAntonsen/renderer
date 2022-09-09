@@ -35,6 +35,16 @@ impl Ray {
         new_ray.direction = scaling_matrix * self.direction;
         new_ray
     }
+    pub fn transform(&self, mat: Matrix4<f32>) -> Ray {
+        // to do:
+        // try making the matrix a struct/enum with a translation type and translation type
+
+        let mut new_ray = self.clone();
+        new_ray.origin = mat * self.origin;
+        new_ray.direction = mat * self.direction; // not sure if translation will break this, need to test
+        new_ray
+
+    }
 
     // may need to combine into one single transform() trait
 

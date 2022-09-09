@@ -38,11 +38,8 @@ fn main() {
     
     let i1 = Intersection::new(0.4, &sphere);
     let i2 = Intersection::new(0.6, &sphere);
-    let i3 = Intersection::new(0.6, &sphere);
-    let i4 = Intersection::new(-0.1, &sphere);
-    let i5 = Intersection::new(0.0, &sphere);
 
-    let mut intersections = Intersections::collect(vec![i1, i3, i2, i4, i5]);
+    let mut intersections = Intersections::collect(vec![i1, i2]);
 
 
     if let Some(i) = intersect_sphere(&ray1, &sphere) {

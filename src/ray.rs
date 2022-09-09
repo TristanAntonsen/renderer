@@ -32,7 +32,10 @@ impl Ray {
         );
 
         new_ray.origin = scaling_matrix * self.origin;
-
+        new_ray.direction = scaling_matrix * self.direction;
         new_ray
     }
+
+    // may need to combine into one single transform() trait
+
 }

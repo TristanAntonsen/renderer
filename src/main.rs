@@ -19,8 +19,8 @@ extern crate image;
 fn main() {
 
     // --------- Image parameters ----------
-    const X_RES : u32 = 500;
-    const Y_RES : u32 = 500;
+    const X_RES : u32 = 1080;
+    const Y_RES : u32 = 1080;
 
 
     let wall_x : f32 = 6.0;
@@ -31,13 +31,11 @@ fn main() {
 
 
     let camera_origin = Matrix4x1::new(0.0, 0.0, 5.0, 1.0);
-    let sphere_origin = Matrix4x1::new(0.0, 0.0, 50.0, 1.0);
     
-    let mut ray_direction = Matrix4x1::new(0.0, 0.0, 1.0, 0.0);
     let mut ray = camera_ray(10.0, 10.0, camera_origin, wall_z, wall_x, wall_y);
 
     let mut sphere = Sphere::new(0.0, 0.0, 0.0, 1.0);
-    // sphere.set_transform(translation(5.0, 0.0, 0.0));
+    sphere.set_transform(scaling(2.0, 2.0, 2.0));
     
 
     let mut intersections = Intersections{collection: Vec::new()};

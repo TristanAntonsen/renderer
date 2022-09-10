@@ -9,7 +9,7 @@ use intersections::{Intersection,Intersections,intersect_sphere};
 use constants::{Canvas};
 use ray::Ray;
 use renderer::camera_ray;
-use geometry::{Sphere, scaling, translation};
+use geometry::{Sphere, scaling, translation, normal_at};
 use nalgebra::{Matrix4x1, Matrix4};
 
 use crate::export::_save_png;
@@ -35,7 +35,7 @@ fn main() {
     let mut ray = camera_ray(10.0, 10.0, camera_origin, wall_z, wall_x, wall_y);
 
     let mut sphere = Sphere::new(0.0, 0.0, 0.0, 1.0);
-    sphere.set_transform(scaling(2.0, 2.0, 2.0));
+    // sphere.set_transform(scaling(1.0, 1.0, 1.0));
     
 
     let mut intersections = Intersections{collection: Vec::new()};
@@ -45,7 +45,6 @@ fn main() {
 
     let mut canvas_x = 0.0;
     let mut canvas_y = 0.0;
-
 
     for x in 0..X_RES {
         for y in 0..Y_RES {
@@ -58,15 +57,30 @@ fn main() {
            }
         }
     }
-    // if let Some(i) = intersect_sphere(&ray1, &sphere) {
-    //      // may need to be refactored so both intersections are added automatically (pg. 68)
-    //     intersections.collection.push(Intersection::new(i.0, &sphere));
-    //     intersections.collection.push(Intersection::new(i.1, &sphere));
-    // }
+
+    let ray2 = Ray {
+        origin: Matrix4x1::new(0.0, 0.0, -5.0, 1.0), // ray centered on origin
+        direction: Matrix4x1::new(0.0, 0.0, 1.0, 0.0) // cast in X direction
+    };
+
+    println!("ray2: {},{}",ray2.origin, ray2.direction);
+    if let Some(i) = intersect_sphere(&ray2, &sphere) {
+         // may need to be refactored so both intersections are added automatically (pg. 68)
+        intersections.collection.push(Intersection::new(i.0, &sphere));
+        intersections.collection.push(Intersection::new(i.1, &sphere));
+        
+    }
+    
+    println!("t1: {:?}", intersections.collection[0].t);
+    println!("t2: {:?}", intersections.collection[1].t);
 
     // if let Some(h) = intersections.hit() { // do this if h is Some(...)
     //     println!("hit: {:?}",h)
     // }
+
+    let n = normal_at(&sphere, Matrix4x1::new(f32::sqrt(3.0)/3.0,f32::sqrt(3.0)/3.0,f32::sqrt(3.0)/3.0,1.0));
+    
+    println!("NORMAL: {}",n);
 
     _save_png("sphere.png", canvas);
 

@@ -5,7 +5,11 @@ pub fn reflect(in_vector:Matrix4x1<f32>, normal: Matrix4x1<f32>) -> Matrix4x1<f3
     return in_vector - normal * 2.0 * in_vector.dot(&normal)
 }
 
+pub fn position(ray: &Ray, t: f32) -> Matrix4x1<f32> {
+    let pos = ray.origin + ray.direction * t;
 
+    return pos
+}
 
 #[derive(Clone)]
 pub struct Ray {

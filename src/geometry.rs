@@ -1,11 +1,12 @@
 use nalgebra::{Matrix4x1, Matrix4};
+use crate::material::Material;
 
 // struct for Sphere object used for calculating intersections
-#[derive(Debug)] //automatically implementing traits
 pub struct Sphere {
     pub origin: Matrix4x1<f32>,
     pub radius: f32,
-    pub transform: Matrix4<f32>
+    pub transform: Matrix4<f32>,
+    pub material: Material
 }
 
 impl Sphere {
@@ -18,7 +19,8 @@ impl Sphere {
                 0.0, 1.0, 0.0, 0.0,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 1.0,
-            )
+            ),
+            material: Material::default()
         }
     }
 

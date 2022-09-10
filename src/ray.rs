@@ -1,5 +1,12 @@
 use nalgebra::{Matrix4x1, Matrix4};
 
+
+pub fn reflect(in_vector:Matrix4x1<f32>, normal: Matrix4x1<f32>) -> Matrix4x1<f32> {
+    return in_vector - normal * 2.0 * in_vector.dot(&normal)
+}
+
+
+
 #[derive(Clone)]
 pub struct Ray {
     pub origin: Matrix4x1<f32>,
@@ -49,3 +56,4 @@ impl Ray {
     // may need to combine into one single transform() trait
 
 }
+

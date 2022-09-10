@@ -2,6 +2,8 @@ mod constants;
 mod geometry;
 mod intersections;
 mod ray;
+mod light;
+mod material;
 
 #[cfg(test)]
 mod tests {

@@ -86,8 +86,8 @@ pub fn intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
 
 // ------------ DISPLAY/DEBUG -------------
 
-impl<'a> fmt::Debug for Intersection<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "t: {}, object: {:?}", self.t, self.object)
-    }
-}
+// impl<'a> fmt::Debug for Intersection<'a> {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(f, "t: {}, object: {:?}", self.t, self.object)
+//     }
+// }

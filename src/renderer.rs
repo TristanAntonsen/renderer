@@ -18,3 +18,4 @@ pub fn camera_ray(x: f32, y: f32, camera_origin: Matrix4x1<f32>, canvas_distance
     }
 
 }
+

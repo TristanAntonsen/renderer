@@ -4,6 +4,9 @@ mod intersections;
 mod geometry;
 mod ray;
 mod renderer;
+mod light;
+mod material;
+
 
 use intersections::{Intersection,Intersections,intersect_sphere};
 use constants::{Canvas};
@@ -36,6 +39,7 @@ fn main() {
 
     let mut sphere = Sphere::new(0.0, 0.0, 0.0, 1.0);
     // sphere.set_transform(scaling(1.0, 1.0, 1.0));
+    sphere.set_transform(translation(0.0, 1.0, 0.0));
     
 
     let mut intersections = Intersections{collection: Vec::new()};
@@ -78,7 +82,7 @@ fn main() {
     //     println!("hit: {:?}",h)
     // }
 
-    let n = normal_at(&sphere, Matrix4x1::new(f32::sqrt(3.0)/3.0,f32::sqrt(3.0)/3.0,f32::sqrt(3.0)/3.0,1.0));
+    let n = normal_at(&sphere, Matrix4x1::new(0.0,1.70711, -0.70711,1.0));
     
     println!("NORMAL: {}",n);
 

@@ -14,8 +14,10 @@ use ray::Ray;
 use renderer::camera_ray;
 use geometry::{Sphere, scaling, translation, normal_at};
 use nalgebra::{Matrix4x1, Matrix4};
+use light::PointLight;
+use material::Material;
 
-use crate::export::_save_png;
+use crate::{export::_save_png, renderer::lighting};
 extern crate image;
 
 
@@ -62,29 +64,15 @@ fn main() {
         }
     }
 
-    let ray2 = Ray {
-        origin: Matrix4x1::new(0.0, 0.0, -5.0, 1.0), // ray centered on origin
-        direction: Matrix4x1::new(0.0, 0.0, 1.0, 0.0) // cast in X direction
-    };
+    let rt2_2 = (2.0 as f32).sqrt() / 2.0;
+    let eyev = Matrix4x1::new(0.0,0.0,-1.0,0.0);
+    let normalv = Matrix4x1::new(0.0,0.0,-1.0,0.0);
+    let light = PointLight::new(1.0, Matrix4x1::new(0.0,0.0,10.0,1.0));
+    let mut mat = Material::default();
+    let position = Matrix4x1::new(0.0,0.0,0.0,1.0);
+    let result = lighting(&mut mat, light, position, eyev, normalv);
 
-    println!("ray2: {},{}",ray2.origin, ray2.direction);
-    if let Some(i) = intersect_sphere(&ray2, &sphere) {
-         // may need to be refactored so both intersections are added automatically (pg. 68)
-        intersections.collection.push(Intersection::new(i.0, &sphere));
-        intersections.collection.push(Intersection::new(i.1, &sphere));
-        
-    }
-    
-    println!("t1: {:?}", intersections.collection[0].t);
-    println!("t2: {:?}", intersections.collection[1].t);
-
-    // if let Some(h) = intersections.hit() { // do this if h is Some(...)
-    //     println!("hit: {:?}",h)
-    // }
-
-    let n = normal_at(&sphere, Matrix4x1::new(0.0,1.70711, -0.70711,1.0));
-    
-    println!("NORMAL: {}",n);
+    println!("result: {}",result);
 
     _save_png("sphere.png", canvas);
 

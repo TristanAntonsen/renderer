@@ -5,6 +5,7 @@ use crate::light::PointLight;
 
 use nalgebra::{Matrix4x1};
 
+
 pub fn camera_ray(x: f32, y: f32, camera_origin: Matrix4x1<f32>, canvas_distance: f32, width: f32, height: f32) -> Ray {
 
     let canvas_point = Matrix4x1::new(
@@ -23,7 +24,7 @@ pub fn camera_ray(x: f32, y: f32, camera_origin: Matrix4x1<f32>, canvas_distance
 
 }
 
-pub fn lighting(material: &mut Material, light: PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>) -> f32 {
+pub fn lighting(material: &mut Material, light: &PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>) -> f32 {
     
     //color to turn into final color
     let mut color = material.color.clone();

@@ -37,8 +37,6 @@ impl<'a> Intersections<'a> {
             }
         }
         return None
-
-
     }
 
 }

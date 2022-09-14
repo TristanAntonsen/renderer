@@ -15,10 +15,11 @@ use renderer::camera_ray;
 use geometry::{Sphere, scaling, translation, normal_at};
 use nalgebra::{Matrix4x1, Matrix4, Point};
 use light::PointLight;
-use material::Material;
+use material::{Material, color_from_rgb};
 
 use crate::{export::_save_png, renderer::lighting};
 extern crate image;
+use std::time::{Duration, Instant};
 
 
 fn main() {
@@ -42,8 +43,9 @@ fn main() {
     let mut sphere = Sphere::new(0.0, 0.0, 0.0, 1.0);
     // sphere.set_transform(scaling(2.0, 2.0, 2.0));
     sphere.set_transform(scaling(0.5, 0.5, 0.5));
-    sphere.material.color = 0.75;
-    sphere.material.specular = 0.5;
+    // sphere.material.color = [1.0, 0.2, 1.0];
+    sphere.material.color = color_from_rgb(181, 126, 220);
+
 
     // --------- Light ----------
     let mut light = PointLight::new(1.0, Matrix4x1::new(
@@ -65,6 +67,7 @@ fn main() {
     // ------------------------------------
     // --------- Main loop start ----------
     // ------------------------------------
+    let start = Instant::now();
     for x in 0..X_RES {
         for y in 0..Y_RES {
             canvas_x = x as f32 * x_inc;
@@ -80,18 +83,19 @@ fn main() {
                     normal = normal_at(&sphere, point);
                     eye = -ray.direction;
                     color = lighting(&mut sphere.material, &light, point, eye, normal);
-                    canvas.write_pixel(x as usize, y as usize, [color, color, color]);
+                    canvas.write_pixel(x as usize, y as usize, color);
                 }
 
             }
         }
     }
+    let duration = start.elapsed();
+    println!("Elapsed time: {:?}", duration);
     // -----------------------------------------
     // --------- Main render loop end ----------
     // -----------------------------------------
 
     // --------- Saving render ---------- d
     _save_png("sphere.png", canvas);
-
 
 }

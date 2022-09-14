@@ -24,38 +24,36 @@ pub fn camera_ray(x: f32, y: f32, camera_origin: Matrix4x1<f32>, canvas_distance
 
 }
 
-pub fn lighting(material: &mut Material, light: &PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>) -> f32 {
+pub fn lighting(material: &mut Material, light: &PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>) -> [f32; 3] {
     
     //color to turn into final color
-    let mut color = material.color.clone();
+    let mut color = material.color;
 
     // combining surface color with light's intensity
-    
-    // color.iter_mut().for_each(|c| *c *= light.intensity);
-    color *= light.intensity;
-    // find direction from point to light source
+    color.iter_mut().for_each(|c| *c *= light.intensity);
 
+    // find direction from point to light source
     let lightv = (light.position - point).normalize();
 
     // combining color with ambient color
-
-    let ambient = color * material.ambient;
+    let mut ambient = color.clone();
+    ambient.iter_mut().for_each(|c| *c *= material.ambient);
 
     // cos of angle bettween lightv and normal (black if negative)
     let light_dot_normal = lightv.dot(&normalv);
-    let diffuse: f32;
-    let specular: f32;
+
+    let mut diffuse = color.clone();    
+    let mut specular = [0.0,0.0,0.0];
     let reflectv: Matrix4x1<f32>;
     let reflect_dot_eye: f32;
     let factor: f32;
 
     if light_dot_normal < 0.0 { // not visible
-        diffuse = 0.0;
-        specular = 0.0;
+        // specular & diffuse are [0,0,0]
         return ambient
     } else {
         // diffuse contribution
-        diffuse = color * material.diffuse * light_dot_normal;
+        diffuse.iter_mut().for_each(|c| *c *= material.diffuse * light_dot_normal);
 
         reflectv = reflect(-lightv, normalv);
 
@@ -63,15 +61,20 @@ pub fn lighting(material: &mut Material, light: &PointLight, point: Matrix4x1<f3
         reflect_dot_eye = reflectv.dot(&eyev);
 
         if reflect_dot_eye <= 0.0 {
-            specular = 0.0;
-            return ambient + diffuse
+            specular = [0.0, 0.0, 0.0];
         } else {
             // specular contribution
             factor = reflect_dot_eye.powf(material.shininess);
-            specular = light.intensity * material.specular * factor;
-        }
+            // specular = light.intensity * material.specular * factor;
+            specular.iter_mut().for_each(|c| *c = light.intensity * material.specular * factor);            
 
-        ambient + diffuse + specular
+        };
+        
+        [
+            ambient[0] + diffuse[0] + specular[0],
+            ambient[1] + diffuse[1] + specular[1],
+            ambient[2] + diffuse[2] + specular[2],
+        ]
     }
 
     

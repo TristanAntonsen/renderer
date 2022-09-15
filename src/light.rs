@@ -6,7 +6,7 @@ pub struct PointLight {
 }
 
 impl PointLight {
-    pub fn new(intensity: f32,position: Matrix4x1<f32>) -> Self {
+    pub fn new(intensity: f32, position: Matrix4x1<f32>) -> Self {
         Self {
             intensity,
             position

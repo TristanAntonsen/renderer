@@ -15,9 +15,9 @@ impl Sphere {
             origin: Matrix4x1::new(x,y,z,1.0),
             radius: radius,
             transform: Matrix4::new(
-                1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
+                radius, 0.0, 0.0, 0.0,
+                0.0, radius, 0.0, 0.0,
+                0.0, 0.0, radius, 0.0,
                 0.0, 0.0, 0.0, 1.0,
             ),
             material: Material::default()

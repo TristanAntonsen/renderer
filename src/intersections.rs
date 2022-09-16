@@ -1,5 +1,6 @@
 use crate::geometry::Sphere;
 use crate::ray::Ray;
+use crate::world::World;
 use nalgebra::{min, Matrix1x4};
 use std::fmt;
 
@@ -18,6 +19,13 @@ pub struct Intersection<'a> {
 // ------------ INTERSECTION TRAITS -------------
 
 impl<'a> Intersections<'a> {
+
+    pub fn init() -> Self {
+        Self {
+            collection: Vec::new()
+        }
+    }
+
     pub fn collect(ints: Vec<Intersection<'a>>) -> Self {
         Self {
             collection: ints
@@ -50,6 +58,22 @@ impl<'a> Intersection<'a> { //trait must also outlive Intersection
     }
 }
 
+// ------------ WORLD INTERSECTIONS ------------
+
+pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> {
+
+    let mut intersections = Intersections::init();
+
+    for object in world.objects.iter() {
+        if let Some(i) = intersect_sphere(&ray, &object) {
+            let intersection = Intersection::new(i.0, &object);
+            intersections.collection.push(intersection);
+        }
+    }
+
+    intersections
+
+}
 
 // ------------ OBJECT INTERSECTION FUNCTIONS -------------
 

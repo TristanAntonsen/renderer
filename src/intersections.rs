@@ -68,6 +68,7 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
         if let Some(i) = intersect_sphere(&ray, &object) {
             let intersection = Intersection::new(i.0, &object);
             intersections.collection.push(intersection);
+            println!("t_2: {}", i.1);
         }
     }
 

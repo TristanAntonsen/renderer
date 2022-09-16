@@ -72,6 +72,8 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
         }
     }
 
+    intersections.collection.sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap()); //sorting by t1
+
     intersections
 
 }

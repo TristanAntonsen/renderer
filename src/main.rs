@@ -20,7 +20,6 @@ use world::World;
 
 use crate::{export::_save_png, renderer::lighting};
 extern crate image;
-use std::time::{Duration, Instant};
 
 fn main() {
     // -----------------------------------
@@ -38,12 +37,6 @@ fn main() {
     let wall_y: f32 = 6.0;
     let wall_z: f32 = 10.0;
 
-    // --------- Sphere ----------
-    let mut sphere = Sphere::new(0.0, 0.0, 0.0, 1.0);
-    // sphere.set_transform(scaling(2.0, 2.0, 2.0));
-    sphere.set_transform(scaling(0.5, 0.5, 0.5));
-    // sphere.material.color = [1.0, 0.2, 1.0];
-    sphere.material.color = color_from_rgb(208, 220, 167);
 
     // --------- Light ----------
     let mut light = PointLight::new(1.0, Matrix4x1::new(-10.0, -10.0, -10.0, 1.0));
@@ -51,7 +44,8 @@ fn main() {
 
     // --------- World -----------
     let mut world = World::default();
-    world.objects[0].material.color = [0.1, 0.2, 0.3];
+    world.objects[0].material.color = color_from_rgb(52, 235, 158);
+    world.objects[0].set_transform(scaling(0.5, 0.5, 0.5));
 
     println!("World: ");
     println!("Sphere: {:?}", world.objects[0].material.color);
@@ -76,17 +70,17 @@ fn main() {
             canvas_x = x as f32 * x_inc;
             canvas_y = y as f32 * y_inc;
             ray = camera_ray(canvas_x, canvas_y, camera_origin, wall_z, wall_x, wall_y);
-
-            if let Some(i) = intersect_sphere(&ray, &sphere) {
+            
+            if let Some(i) = intersect_sphere(&ray, &world.objects[0]) {
                 t = i.0;
                 // println!("{}",t);
                 // intersections
                 if t > 0.0 {
                     //if the intersection is visible
                     point = position(&ray, t);
-                    normal = normal_at(&sphere, point);
+                    normal = normal_at(&world.objects[0], point);
                     eye = -ray.direction;
-                    color = lighting(&mut sphere.material, &light, point, eye, normal);
+                    color = lighting(&mut world.objects[0].material, &light, point, eye, normal);
                     canvas.write_pixel(x as usize, y as usize, color);
                 }
             }

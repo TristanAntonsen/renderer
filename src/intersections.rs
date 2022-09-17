@@ -1,8 +1,8 @@
-use crate::geometry::Sphere;
+use crate::geometry::normal_at;
+use crate::{geometry::Sphere, ray::position};
 use crate::ray::Ray;
 use crate::world::World;
-use nalgebra::{min, Matrix1x4};
-use std::fmt;
+use nalgebra::{Matrix4x1};
 
 // ------------ INTERSECTION STRUCTS -------------
 
@@ -58,6 +58,43 @@ impl<'a> Intersection<'a> { //trait must also outlive Intersection
     }
 }
 
+// ------------ Precomputing & storing computations ------------
+
+pub struct Comps<'a> {
+    pub object: &'a Sphere,
+    pub point: Matrix4x1<f32>,
+    pub eyev: Matrix4x1<f32>,
+    pub normalv: Matrix4x1<f32>,
+    pub inside: bool
+}
+
+
+pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
+    let object = int.object;
+    let point = position(ray, int.t);
+    println!("t: {}", int.t);
+    let inside;
+    let mut normal = normal_at(object, point);
+    let eyev = -ray.direction;
+    println!("Ray origin: {:?}", ray.origin);
+    if normal.dot(&eyev) < 0.0 {
+        inside = true;
+        normal = -normal;
+        println!("Inside!");
+    } else {
+        inside = false;
+    }
+
+
+    Comps {
+        object,
+        point,
+        eyev,
+        normalv : normal,
+        inside
+    }
+}
+
 // ------------ WORLD INTERSECTIONS ------------
 
 pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> {
@@ -66,9 +103,10 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
 
     for object in world.objects.iter() {
         if let Some(i) = intersect_sphere(&ray, &object) {
-            let intersection = Intersection::new(i.0, &object);
-            intersections.collection.push(intersection);
-            println!("t_2: {}", i.1);
+            intersections.collection.push(Intersection::new(i.0, &object));
+            intersections.collection.push(Intersection::new(i.1, &object));
+            println!("t1: {}", i.0);
+            println!("t2: {}", i.1);
         }
     }
 

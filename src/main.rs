@@ -10,7 +10,7 @@ mod world;
 
 use constants::Canvas;
 use geometry::{normal_at, scaling, translation, Sphere};
-use intersections::{intersect_sphere, intersect_world, Intersection, Intersections};
+use intersections::{intersect_sphere, intersect_world, Intersection, Intersections, prepare_computations, Comps};
 use light::PointLight;
 use material::{color_from_rgb, Material};
 use nalgebra::{Matrix4, Matrix4x1, Point};
@@ -46,13 +46,10 @@ fn main() {
     let mut world = World::default();
     let sphere_index = 0;
     world.objects[sphere_index].material.color = color_from_rgb(52, 235, 158);
-    // world.objects[sphere_index].set_transform(scaling(0.25, 0.25, 0.25));
+    // world.objects[sphere_index].set_transform(scaling(2.0,2.0,2.0));
 
-    println!("World: ");
-    println!("Sphere: {:?}", world.objects[0].material.color);
-    println!("Sphere: {:?}", world.objects[0].radius);
-    println!("Sphere: {:?}", world.objects[1].radius);
-    println!("Lights: {:?}", world.lights[0].position);
+    println!("Sphere 1: {:?}", world.objects[0].radius);
+    println!("Sphere 2: {:?}", world.objects[1].radius);
 
     // --------- Initializing other variables ----------
     let x_inc = wall_x / X_RES as f32;
@@ -66,15 +63,19 @@ fn main() {
 
     // --------- Test interesection ----------
     let test_ray = Ray {
-        origin: Matrix4x1::new(0.0, 0.0, -5.0, 1.0),
+        origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0),
         direction: Matrix4x1::new(0.0, 0.0, 1.0, 0.0),
     };
 
     let world_ints = intersect_world(&test_ray, &world);
+    let test_int = Intersection::new(1.0, &world.objects[sphere_index]);
 
-    println!("world_ints count: {}", world_ints.collection.len());
-    println!("world_ints_t1: {}", world_ints.collection[0].t);
-    println!("world_ints_t2: {}", world_ints.collection[1].t);
+    let comps = prepare_computations(&test_int, &test_ray);
+    println!("Comps.object.transform: {:?}", comps.object.transform);
+    println!("Comps.point: {:?}", comps.point);
+    println!("Comps.eyev: {:?}", comps.eyev);
+    println!("Comps.normalv: {:?}", comps.normalv);
+    println!("Comps.inside: {:?}", comps.inside);
 
     // ------------------------------------
     // --------- Main loop start ----------

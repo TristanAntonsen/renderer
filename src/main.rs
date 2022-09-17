@@ -18,7 +18,7 @@ use ray::{position, Ray};
 use renderer::camera_ray;
 use world::World;
 
-use crate::{export::_save_png, renderer::lighting};
+use crate::{export::_save_png, renderer::{lighting, shade_hit}};
 extern crate image;
 
 fn main() {
@@ -47,7 +47,7 @@ fn main() {
     let sphere_index = 0;
     world.objects[sphere_index].material.color = color_from_rgb(52, 235, 158);
     // world.objects[sphere_index].set_transform(scaling(2.0,2.0,2.0));
-
+    world.objects[1].material.color = color_from_rgb(100,100,0);
     println!("Sphere 1: {:?}", world.objects[0].radius);
     println!("Sphere 2: {:?}", world.objects[1].radius);
 
@@ -70,12 +70,14 @@ fn main() {
     let world_ints = intersect_world(&test_ray, &world);
     let test_int = Intersection::new(1.0, &world.objects[sphere_index]);
 
-    let comps = prepare_computations(&test_int, &test_ray);
+    let mut comps = prepare_computations(&test_int, &test_ray);
     println!("Comps.object.transform: {:?}", comps.object.transform);
     println!("Comps.point: {:?}", comps.point);
     println!("Comps.eyev: {:?}", comps.eyev);
     println!("Comps.normalv: {:?}", comps.normalv);
     println!("Comps.inside: {:?}", comps.inside);
+    let c = shade_hit(&world, &comps);
+    println!("Color: {:?}",c);
 
     // ------------------------------------
     // --------- Main loop start ----------

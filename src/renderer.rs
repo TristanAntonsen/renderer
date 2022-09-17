@@ -1,6 +1,8 @@
 use crate::ray::{Ray,reflect};
 use crate::material::Material;
 use crate::light::PointLight;
+use crate::world::World;
+use crate::intersections::Comps;
 
 
 use nalgebra::{Matrix4x1};
@@ -23,8 +25,19 @@ pub fn camera_ray(x: f32, y: f32, camera_origin: Matrix4x1<f32>, canvas_distance
     }
 
 }
+)
 
-pub fn lighting(material: &mut Material, light: &PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>) -> [f32; 3] {
+pub fn shade_hit(world: &World, comps: &Comps) -> [f32; 3] {
+    lighting(
+        &comps.object.material,
+        &world.lights[0],
+        comps.point,
+        comps.eyev,
+        comps.normalv
+    )
+}
+
+pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>) -> [f32; 3] {
     
     //color to turn into final color
     let mut color = material.color;

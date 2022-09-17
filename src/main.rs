@@ -18,7 +18,7 @@ use ray::{position, Ray};
 use renderer::{camera_ray, color_at};
 use world::{World, view_transform};
 
-use crate::{export::_save_png, renderer::{lighting, shade_hit}};
+use crate::{export::_save_png, renderer::{lighting, shade_hit, Camera}};
 extern crate image;
 
 fn main() {
@@ -61,6 +61,11 @@ fn main() {
     let (mut color, mut point, mut normal, mut eye);
     let mut t;
 
+    // --------- Camera ----------
+    let cam = Camera::default();
+    println!("camera transform: {:?}", cam.transform);
+    println!("pixel_size: {}", cam.pixel_size);
+    println!("half_width: {}", cam.half_width);
     // --------- Testing view_transform() ----------
     let test_ray = Ray {
         origin: Matrix4x1::new(0.0, 0.0, 0.75, 1.0),

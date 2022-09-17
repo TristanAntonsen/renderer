@@ -1,12 +1,51 @@
+use std::f32::consts::PI;
+
 use crate::ray::{Ray,reflect};
 use crate::material::Material;
 use crate::light::PointLight;
 use crate::world::World;
 use crate::intersections::{Comps, intersect_world, prepare_computations};
+use nalgebra::{Matrix4x1, Matrix4};
 
+pub struct Camera {
+    pub hsize: u32,
+    pub vsize: u32,
+    pub field_of_view: f32,
+    pub transform: Matrix4<f32>
 
-use nalgebra::{Matrix4x1};
+}
 
+impl Camera {
+    pub fn default() -> Self {
+        Self {
+            hsize: 160,
+            vsize: 120,
+            field_of_view: PI / 2.0,
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0,
+            )
+        }
+    }
+    
+    pub fn pixel_size(&self) -> f32 {
+        let half_view = (self.field_of_view / 2.0).tan();
+        let aspect = (self.hsize / self.vsize) as f32;
+        let (half_width, half_height);
+        if aspect >= 1.0 {
+            half_width = half_view;
+            half_height = half_view / aspect;
+        } else {
+            half_width = half_view / aspect;
+            half_height = half_view
+        };
+
+        (half_width * 2.0) / self.hsize as f32
+
+    }
+}
 
 pub fn camera_ray(x: f32, y: f32, camera_origin: Matrix4x1<f32>, canvas_distance: f32, width: f32, height: f32) -> Ray {
 

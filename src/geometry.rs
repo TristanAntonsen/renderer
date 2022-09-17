@@ -1,4 +1,4 @@
-use nalgebra::{Matrix4x1, Matrix4};
+use nalgebra::{Matrix4x1, Matrix4, Matrix3x1};
 use crate::material::Material;
 
 // struct for Sphere object used for calculating intersections
@@ -99,4 +99,20 @@ pub fn translation(x: f32, y: f32, z: f32) -> Matrix4<f32> {
         0.0, 0.0, 1.0, z,
         0.0, 0.0, 0.0, 1.0,
     )
+}
+
+pub fn cross_4(v1: &Matrix4x1<f32>, v2: &Matrix4x1<f32>) -> Matrix4x1<f32> {
+
+    let tmp_a = Matrix3x1::new(v1[0], v1[1], v1[2]); // not a good way to do this, fix later
+    let tmp_b = Matrix3x1::new(v2[0], v2[1], v2[2]); // not a good way to do this, fix later
+
+    let cross = tmp_a.cross(&tmp_b);
+
+    Matrix4x1::new(
+        cross[0],
+        cross[1],
+        cross[2],
+        0.0
+    )
+
 }

@@ -16,7 +16,7 @@ use material::{color_from_rgb, Material};
 use nalgebra::{Matrix4, Matrix4x1, Point};
 use ray::{position, Ray};
 use renderer::{camera_ray, color_at};
-use world::World;
+use world::{World, view_transform};
 
 use crate::{export::_save_png, renderer::{lighting, shade_hit}};
 extern crate image;
@@ -61,18 +61,17 @@ fn main() {
     let (mut color, mut point, mut normal, mut eye);
     let mut t;
 
-    // --------- Testing color_at() ----------
+    // --------- Testing view_transform() ----------
     let test_ray = Ray {
         origin: Matrix4x1::new(0.0, 0.0, 0.75, 1.0),
         direction: Matrix4x1::new(0.0, 0.0, -1.0, 0.0),
     };
 
-    world.objects[0].material.ambient = 1.0;
-    world.objects[1].material.ambient = 1.0;
+    let from = Matrix4x1::new(0.0, 0.0, 8.0, 1.0);
+    let to = Matrix4x1::new(0.0, 0.0, 0.0, 1.0);
+    let up = Matrix4x1::new(0.0, 1.0, 0.0, 0.0);
 
-    let c = color_at(&world, &test_ray);
-    println!("color: {:?}",c);
-    println!("color: {:?}",world.objects[1].material.color);
+    println!("view_transform: {:?}",view_transform(from, to, up));
 
     // ------------------------------------
     // --------- Main loop start ----------

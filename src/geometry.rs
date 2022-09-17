@@ -101,6 +101,36 @@ pub fn translation(x: f32, y: f32, z: f32) -> Matrix4<f32> {
     )
 }
 
+pub fn rotation_x(theta: f32) -> Matrix4<f32> {
+
+    Matrix4::new(
+        1.0, 0.0,         0.0,          0.0,
+        0.0, theta.cos(), -theta.sin(), 0.0,
+        0.0, theta.sin(), theta.cos(),  0.0,
+        0.0, 0.0, 0.0, 1.0,
+    )
+}
+
+pub fn rotation_y(theta: f32) -> Matrix4<f32> {
+
+    Matrix4::new(
+        theta.cos(),  0.0,  theta.sin(),   0.0,
+        0.0,          1.0,  0.0,           0.0,
+        -theta.sin(), 0.0,  theta.cos(),   0.0,
+        0.0,          0.0,  0.0,           1.0,
+    )
+}
+
+pub fn rotation_z(theta: f32) -> Matrix4<f32> {
+
+    Matrix4::new(
+        theta.cos(),  -theta.sin(),  0.0,   0.0,
+        theta.sin(),  theta.cos(),   0.0,   0.0,
+        0.0,          1.0,           0.0,   0.0,
+        0.0,          0.0,           0.0,   1.0,
+    )
+}
+
 pub fn cross_4(v1: &Matrix4x1<f32>, v2: &Matrix4x1<f32>) -> Matrix4x1<f32> {
 
     let tmp_a = Matrix3x1::new(v1[0], v1[1], v1[2]); // not a good way to do this, fix later

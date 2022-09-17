@@ -2,7 +2,7 @@ use crate::ray::{Ray,reflect};
 use crate::material::Material;
 use crate::light::PointLight;
 use crate::world::World;
-use crate::intersections::Comps;
+use crate::intersections::{Comps, intersect_world, prepare_computations};
 
 
 use nalgebra::{Matrix4x1};
@@ -25,7 +25,19 @@ pub fn camera_ray(x: f32, y: f32, camera_origin: Matrix4x1<f32>, canvas_distance
     }
 
 }
-)
+pub fn color_at(world: &World, ray: &Ray) -> [f32; 3] {
+    let world_ints = intersect_world(ray, &world);
+    let color : [f32; 3];
+    if let Some(h) = world_ints.hit() {
+        // if there is a valid intersection, compute the color
+        let comps = prepare_computations(&h, ray);
+        color = shade_hit(world, &comps)
+    } else {
+        // if no valid intersection, return black
+        color = [0.0,0.0,0.0];
+    }
+    return color
+}
 
 pub fn shade_hit(world: &World, comps: &Comps) -> [f32; 3] {
     lighting(

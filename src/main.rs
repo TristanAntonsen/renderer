@@ -15,7 +15,7 @@ use light::PointLight;
 use material::{color_from_rgb, Material};
 use nalgebra::{Matrix4, Matrix4x1, Point};
 use ray::{position, Ray};
-use renderer::camera_ray;
+use renderer::{camera_ray, color_at};
 use world::World;
 
 use crate::{export::_save_png, renderer::{lighting, shade_hit}};
@@ -61,23 +61,18 @@ fn main() {
     let (mut color, mut point, mut normal, mut eye);
     let mut t;
 
-    // --------- Test interesection ----------
+    // --------- Testing color_at() ----------
     let test_ray = Ray {
-        origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0),
-        direction: Matrix4x1::new(0.0, 0.0, 1.0, 0.0),
+        origin: Matrix4x1::new(0.0, 0.0, 0.75, 1.0),
+        direction: Matrix4x1::new(0.0, 0.0, -1.0, 0.0),
     };
 
-    let world_ints = intersect_world(&test_ray, &world);
-    let test_int = Intersection::new(1.0, &world.objects[sphere_index]);
+    world.objects[0].material.ambient = 1.0;
+    world.objects[1].material.ambient = 1.0;
 
-    let mut comps = prepare_computations(&test_int, &test_ray);
-    println!("Comps.object.transform: {:?}", comps.object.transform);
-    println!("Comps.point: {:?}", comps.point);
-    println!("Comps.eyev: {:?}", comps.eyev);
-    println!("Comps.normalv: {:?}", comps.normalv);
-    println!("Comps.inside: {:?}", comps.inside);
-    let c = shade_hit(&world, &comps);
-    println!("Color: {:?}",c);
+    let c = color_at(&world, &test_ray);
+    println!("color: {:?}",c);
+    println!("color: {:?}",world.objects[1].material.color);
 
     // ------------------------------------
     // --------- Main loop start ----------

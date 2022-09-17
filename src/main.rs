@@ -8,6 +8,8 @@ mod ray;
 mod renderer;
 mod world;
 
+use std::f32::consts::PI;
+
 use constants::Canvas;
 use geometry::{normal_at, scaling, translation, Sphere};
 use intersections::{intersect_sphere, intersect_world, Intersection, Intersections, prepare_computations, Comps};
@@ -15,7 +17,7 @@ use light::PointLight;
 use material::{color_from_rgb, Material};
 use nalgebra::{Matrix4, Matrix4x1, Point};
 use ray::{position, Ray};
-use renderer::{camera_ray, color_at};
+use renderer::{camera_ray, ray_for_pixel};
 use world::{World, view_transform};
 
 use crate::{export::_save_png, renderer::{lighting, shade_hit, Camera}};
@@ -58,54 +60,62 @@ fn main() {
     let mut canvas_x = 0.0;
     let mut canvas_y = 0.0;
     let mut intersections: Intersections;
-    let (mut color, mut point, mut normal, mut eye);
-    let mut t;
+    // let (mut color, mut point, mut normal, mut eye);
+    // let mut t;
 
     // --------- Camera ----------
-    let cam = Camera::default();
-    println!("camera transform: {:?}", cam.transform);
-    println!("pixel_size: {}", cam.pixel_size);
-    println!("half_width: {}", cam.half_width);
-    // --------- Testing view_transform() ----------
+    let mut cam = Camera::default(101, 201, PI / 2.0);
+
+    println!("Camera params:");
+    println!("\thsize: {}", &cam.hsize);
+    println!("\tvsize: {}", &cam.vsize);
+    println!("\tpixel_size: {}", &cam.pixel_size);
+    println!("\thalf_width: {}", &cam.half_width);
+    println!("\thalf_height: {}", &cam.half_height);
+    println!("\tfov: {}", &cam.field_of_view);
+    println!("\ttransform: {:?}", &cam.transform);
+
+    // --------- Testing ray_for_pixel ----------
+
+    let cam_ray = ray_for_pixel(&cam, 50, 100);
+
+    println!("ray origin: {:?}", cam_ray.origin);
+    println!("ray direction: {:?}", cam_ray.direction);
+
+    // --------- Test ray ----------
     let test_ray = Ray {
         origin: Matrix4x1::new(0.0, 0.0, 0.75, 1.0),
         direction: Matrix4x1::new(0.0, 0.0, -1.0, 0.0),
     };
 
-    let from = Matrix4x1::new(0.0, 0.0, 8.0, 1.0);
-    let to = Matrix4x1::new(0.0, 0.0, 0.0, 1.0);
-    let up = Matrix4x1::new(0.0, 1.0, 0.0, 0.0);
-
-    println!("view_transform: {:?}",view_transform(from, to, up));
-
     // ------------------------------------
     // --------- Main loop start ----------
     // ------------------------------------
-    for x in 0..X_RES {
-        for y in 0..Y_RES {
-            canvas_x = x as f32 * x_inc;
-            canvas_y = y as f32 * y_inc;
-            ray = camera_ray(canvas_x, canvas_y, camera_origin, wall_z, wall_x, wall_y);
+    // for x in 0..X_RES {
+    //     for y in 0..Y_RES {
+    //         canvas_x = x as f32 * x_inc;
+    //         canvas_y = y as f32 * y_inc;
+    //         ray = camera_ray(canvas_x, canvas_y, camera_origin, wall_z, wall_x, wall_y);
             
-            if let Some(i) = intersect_sphere(&ray, &world.objects[sphere_index]) {
-                t = i.0;
-                // println!("{}",t);
-                // intersections
-                if t > 0.0 {
-                    //if the intersection is visible
-                    point = position(&ray, t);
-                    normal = normal_at(&world.objects[sphere_index], point);
-                    eye = -ray.direction;
-                    color = lighting(&mut world.objects[sphere_index].material, &light, point, eye, normal);
-                    canvas.write_pixel(x as usize, y as usize, color);
-                }
-            }
-        }
-    }
+    //         if let Some(i) = intersect_sphere(&ray, &world.objects[sphere_index]) {
+    //             t = i.0;
+    //             // println!("{}",t);
+    //             // intersections
+    //             if t > 0.0 {
+    //                 //if the intersection is visible
+    //                 point = position(&ray, t);
+    //                 normal = normal_at(&world.objects[sphere_index], point);
+    //                 eye = -ray.direction;
+    //                 color = lighting(&mut world.objects[sphere_index].material, &light, point, eye, normal);
+    //                 canvas.write_pixel(x as usize, y as usize, color);
+    //             }
+    //         }
+    //     }
+    // }
     // -----------------------------------------
     // --------- Main render loop end ----------
     // -----------------------------------------
 
     // --------- Saving render ---------- d
-    _save_png("sphere.png", canvas);
+    // _save_png("sphere.png", canvas);
 }

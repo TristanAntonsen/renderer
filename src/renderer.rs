@@ -1,12 +1,10 @@
-use std::f32::consts::PI;
-
 use crate::ray::{Ray,reflect};
 use crate::material::Material;
 use crate::light::PointLight;
 use crate::world::World;
 use crate::intersections::{Comps, intersect_world, prepare_computations};
+use crate::geometry::{norm_3, cross_4};
 use nalgebra::{Matrix4x1, Matrix4};
-
 pub struct Camera {
     pub hsize: u32,
     pub vsize: u32,
@@ -19,14 +17,14 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn default() -> Self {
+    pub fn default(hsize: u32, vsize: u32, fov: f32) -> Self {
         let mut default_cam = Self {
-            hsize: 160,
-            vsize: 120,
-            field_of_view: PI / 2.0,
-            pixel_size: 0.0,
-            half_width: 0.0,
-            half_height: 0.0,
+            hsize,
+            vsize,
+            field_of_view: fov,
+            pixel_size: 0.0,  //init
+            half_width: 0.0,  //init
+            half_height: 0.0, //init
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0,
                 0.0, 1.0, 0.0, 0.0,
@@ -43,13 +41,15 @@ impl Camera {
     
     pub fn pixel_size(&mut self) {
         let half_view = (self.field_of_view / 2.0).tan();
-        let aspect = (self.hsize / self.vsize) as f32;
+        println!("\thalf_view: {}", &half_view);
+        let aspect = (self.hsize as f32/ self.vsize as f32);
+        println!("\taspect: {}", &aspect);
         let (half_width, half_height);
         if aspect >= 1.0 {
             half_width = half_view;
             half_height = half_view / aspect;
         } else {
-            half_width = half_view / aspect;
+            half_width = half_view * aspect;
             half_height = half_view
         };
 
@@ -60,16 +60,39 @@ impl Camera {
     }
 }
 
-// pub fn ray_for_pixel(camera: Camera, px: u32, py: u32) -> Ray {
-//     let pixel_size = camera.pixel_size();
-//     // offset from edge of canvas to pixel *center*
-//     let x_offset = (0.5 * px as f32) * pixel_size;
-//     let y_offset = (0.5 * py as f32) * pixel_size;
-//     // untransformed coordinates of the pixel in world space
-//     // (camera looks toward -z, so +x is to the left)
-//     let world_x = camera.half_width - x_offset;
+pub fn ray_for_pixel(camera: &Camera, px: u32, py: u32) -> Ray {
+    let pixel_size = camera.pixel_size;
 
-// }
+    // offset from edge of canvas to pixel
+    let x_offset = (0.5 + px as f32) * pixel_size;
+    let y_offset = (0.5 + py as f32) * pixel_size;
+    println!("x_offset: {}", x_offset);
+    println!("y_offset: {}", y_offset);
+
+    // untransformed coordinates of the pixel in world space
+    // (camera looks toward -z, so +x is to the left)
+    let world_x = camera.half_width - x_offset; 
+    let world_y = camera.half_height - y_offset;
+    println!("world_x: {}", world_x);
+    println!("world_y: {}", world_y);
+
+    // transforming the canvas point & origin using the camera matrix
+    // & computing the ray's direction vector
+    // canvas @ z = -1
+    let cam_transf_inv = camera.transform.try_inverse().unwrap();
+    let pixel = cam_transf_inv * Matrix4x1::new(world_x, world_y, -1.0, 1.0);
+    println!("pixel: {:?}", pixel);
+    
+    let origin = cam_transf_inv * Matrix4x1::new(0.0,0.0,0.0,1.0);
+    // let direction = norm_3(&(pixel - origin)); // need to normalize without the 4th element
+    let direction = (pixel - origin).normalize(); // need to normalize without the 4th element
+
+    Ray {
+        origin,
+        direction
+    }
+
+}
 
 pub fn camera_ray(x: f32, y: f32, camera_origin: Matrix4x1<f32>, canvas_distance: f32, width: f32, height: f32) -> Ray {
 
@@ -121,7 +144,7 @@ pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f32>, 
     color.iter_mut().for_each(|c| *c *= light.intensity);
 
     // find direction from point to light source
-    let lightv = (light.position - point).normalize();
+    let lightv = norm_3(&(light.position - point));
 
     // combining color with ambient color
     let mut ambient = color.clone();

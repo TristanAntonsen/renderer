@@ -116,3 +116,17 @@ pub fn cross_4(v1: &Matrix4x1<f32>, v2: &Matrix4x1<f32>) -> Matrix4x1<f32> {
     )
 
 }
+
+// may slow things down, revisit later
+pub fn norm_4(v: &Matrix4x1<f32>) -> Matrix4x1<f32>{
+
+    let v_sub = Matrix3x1::new(v[0], v[1], v[2]).normalize();
+
+    Matrix4x1::new(
+        v_sub[0],
+        v_sub[1],
+        v_sub[2],
+        v[3],
+    )
+
+}

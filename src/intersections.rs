@@ -103,7 +103,8 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
     let mut intersections = Intersections::init();
 
     for object in world.objects.iter() {
-        if let Some(i) = intersect_sphere(&ray, &object) {
+        if let Some(i) = intersect(object, ray) {
+        // if let Some(i) = intersect_sphere(ray, object) {
             intersections.collection.push(Intersection::new(i.0, &object));
             intersections.collection.push(Intersection::new(i.1, &object));
         }
@@ -117,11 +118,17 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
 
 // ------------ ABASTRACT SHAPE INTERSECTION FUNCTIONS -------------
 
-pub fn intersect(shape: &Shape, ray: &Ray) {
+pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
     // make sure ray is transformed
-    let local_ray = ray.transform(shape.transform.try_inverse().unwrap());
+    // this is already done in local functions, so could refactor and include here later
+    // let local_ray = ray.transform(shape.transform.try_inverse().unwrap());
     // pass onto concrete intersection implementation
-    // return local_intersect(shape, local_ray);
+    // "local intersect" here until it needs to be moved elsewhere
+    match shape.shape_id {
+        0 => intersect_sphere(&ray, &shape),
+        _ => None
+
+    }
 }
 
 

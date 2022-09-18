@@ -148,16 +148,20 @@ pub fn color_at(world: &World, ray: &Ray) -> [f32; 3] {
 }
 
 pub fn shade_hit(world: &World, comps: &Comps) -> [f32; 3] {
+
+    let shadowed = is_shadowed(world, comps.over_point);
+
     lighting(
         &comps.object.material,
         &world.lights[0],
         comps.point,
         comps.eyev,
-        comps.normalv
+        comps.normalv,
+        shadowed
     )
 }
 
-pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>) -> [f32; 3] {
+pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>, is_shadowed: bool) -> [f32; 3] {
     
     //color to turn into final color
     let mut color = material.color;
@@ -202,12 +206,19 @@ pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f32>, 
             specular.iter_mut().for_each(|c| *c = light.intensity * material.specular * factor);            
 
         };
-        
-        [
-            ambient[0] + diffuse[0] + specular[0],
-            ambient[1] + diffuse[1] + specular[1],
-            ambient[2] + diffuse[2] + specular[2],
-        ]
+        if is_shadowed {
+            [
+                ambient[0],
+                ambient[1],
+                ambient[2],
+            ]
+        } else {
+            [
+                ambient[0] + diffuse[0] + specular[0],
+                ambient[1] + diffuse[1] + specular[1],
+                ambient[2] + diffuse[2] + specular[2]
+            ]   
+        }
     }
 
     

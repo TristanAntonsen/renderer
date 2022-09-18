@@ -39,19 +39,18 @@ fn main() {
 
     // --------- Objects -----------
     let mut sphere_1 = Sphere::default();
-    sphere_1.material.color = color_from_rgb(255, 150, 0);
-    sphere_1.transform = scaling(1.25, 1.25, 1.25) * translation(-0.75, -0.5, 3.0);
+    // sphere_1.material.color = color_from_rgb(255, 150, 0);
     world.objects.push(sphere_1);
 
     let mut sphere2 = Sphere::default();
-    sphere2.material.color = color_from_rgb(255, 255, 255);
-    sphere2.transform = translation(2.5,0.0, 0.0);
+    // sphere2.material.color = color_from_rgb(255, 255, 255);
+    sphere2.transform = translation(0.0,3.0, 0.0);
     world.objects.push(sphere2);
 
-    let mut sphere3 = Sphere::default();
-    sphere3.material.color = color_from_rgb(200,0,200);
-    sphere3.transform = translation(0.0, 2.5, 0.0);
-    world.objects.push(sphere3);
+    // let mut sphere3 = Sphere::default();
+    // sphere3.material.color = color_from_rgb(200,0,200);
+    // sphere3.transform = translation(0.0, 2.5, 0.0);
+    // world.objects.push(sphere3);
 
     let mut floor = Sphere::default();
     floor.material.color = color_from_rgb(100,100,100);

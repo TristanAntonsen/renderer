@@ -63,6 +63,7 @@ impl<'a> Intersection<'a> { //trait must also outlive Intersection
 pub struct Comps<'a> {
     pub object: &'a Sphere,
     pub point: Matrix4x1<f32>,
+    pub over_point: Matrix4x1<f32>,
     pub eyev: Matrix4x1<f32>,
     pub normalv: Matrix4x1<f32>,
     pub inside: bool
@@ -74,6 +75,8 @@ pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
     let point = position(ray, int.t);
     let inside;
     let mut normal = normal_at(object, point);
+    let EPSILON = 0.00001;
+    let over_point = point + normal * EPSILON;
     let eyev = -ray.direction;
     if normal.dot(&eyev) < 0.0 {
         inside = true;
@@ -86,6 +89,7 @@ pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
     Comps {
         object,
         point,
+        over_point,
         eyev,
         normalv : normal,
         inside

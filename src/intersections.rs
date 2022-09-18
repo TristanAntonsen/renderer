@@ -1,5 +1,5 @@
-use crate::geometry::normal_at;
-use crate::{geometry::Sphere, ray::position};
+use crate::geometry::{Sphere, Shape, normal_at};
+use crate::ray::position;
 use crate::ray::Ray;
 use crate::world::World;
 use nalgebra::{Matrix4x1};
@@ -115,7 +115,17 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
 
 }
 
-// ------------ OBJECT INTERSECTION FUNCTIONS -------------
+// ------------ ABASTRACT SHAPE INTERSECTION FUNCTIONS -------------
+
+pub fn intersect(shape: &Shape, ray: &Ray) {
+    // make sure ray is transformed
+    let local_ray = ray.transform(shape.transform.try_inverse().unwrap());
+    // pass onto concrete intersection implementation
+    // return local_intersect(shape, local_ray);
+}
+
+
+// ------------ OBJECT SPECIFIC INTERSECTION FUNCTIONS -------------
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
 pub fn intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f64, f64)> {

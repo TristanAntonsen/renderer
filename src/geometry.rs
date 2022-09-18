@@ -10,6 +10,19 @@ pub struct Sphere {
 }
 
 impl Sphere {
+    pub fn default() -> Self {
+        Self {
+            origin: Matrix4x1::new(0.0,0.0,0.0,1.0),
+            radius: 1.0,
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0,
+            ),
+            material: Material::default()
+        }
+    }
     pub fn new(x: f32, y: f32, z: f32, radius: f32) -> Self {
         Self {
             origin: Matrix4x1::new(x,y,z,1.0),

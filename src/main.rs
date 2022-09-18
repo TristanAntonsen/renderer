@@ -38,24 +38,24 @@ fn main() {
     world.lights.push(light);
 
     // --------- Objects -----------
-    let mut sphere_1 = Shape::default();
+    let mut sphere_1 = Shape::default_sphere();
     sphere_1.material.color = color_from_rgb(255, 150, 0);
     sphere_1.transform = scaling(1.5, 1.5, 1.5);
     world.objects.push(sphere_1);
 
-    let mut sphere2 = Shape::default();
+    let mut sphere2 = Shape::default_sphere();
     sphere2.material.color = color_from_rgb(255, 0, 255);
     sphere2.transform = translation(2.0,1.0, 1.5) * scaling(0.5, 0.5, 0.5);
     world.objects.push(sphere2);
 
 
-    let mut floor = Shape::default();
+    let mut floor = Shape::default_sphere();
     floor.material.color = color_from_rgb(100,150,100);
     floor.transform = translation(0.0, -2.0, 0.0) * scaling(15.0, 0.01, 15.0);
     world.objects.push(floor);
 
     
-    let mut wall_2 = Shape::default();
+    let mut wall_2 = Shape::default_sphere();
     wall_2.material.color = color_from_rgb(100,150,100);
 
     wall_2.transform = 

@@ -21,7 +21,7 @@ impl Shape {
             material: Material::default()
         }
     }
-    pub fn default() -> Self {
+    pub fn default_sphere() -> Self {
         Self {
             origin: Matrix4x1::new(0.0,0.0,0.0,1.0),
             transform: Matrix4::new(

@@ -11,7 +11,7 @@ mod world;
 use std::f64::consts::PI;
 
 use constants::Canvas;
-use geometry::{normal_at, scaling, translation, Shape, rotation_x,rotation_y};
+use geometry::{sphere_normal_at, scaling, translation, Shape, rotation_x,rotation_y};
 use intersections::{intersect_sphere, intersect_world, Intersection, Intersections, prepare_computations, Comps};
 use light::PointLight;
 use material::{color_from_rgb, Material};

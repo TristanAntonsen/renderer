@@ -1,4 +1,4 @@
-use crate::geometry::{Shape, normal_at};
+use crate::geometry::{Shape, sphere_normal_at};
 use crate::ray::position;
 use crate::ray::Ray;
 use crate::world::World;
@@ -74,7 +74,7 @@ pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
     let object = int.object;
     let point = position(ray, int.t);
     let inside;
-    let mut normal = normal_at(object, point);
+    let mut normal = sphere_normal_at(object, point);
     let EPSILON = 0.00001;
     let over_point = point + normal * EPSILON;
     let eyev = -ray.direction;

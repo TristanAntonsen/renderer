@@ -69,9 +69,18 @@ impl _Vector {
     }
 }
 
-// // ---------- Normals ----------
+// ---------- Abstract normal functions ----------
 
-pub fn normal_at(sphere: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
+pub fn normal_at(shape: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
+    match shape.shape_id {
+        _ => sphere_normal_at(shape, world_point), //add other cases later
+    }
+}
+
+// ---------- Local normal functions ----------
+
+// consolodate & move these into abstract function later
+pub fn sphere_normal_at(sphere: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
     // inverse of sphere transformation * the point in world space
     let object_point = sphere.transform.try_inverse().unwrap() * world_point;
 

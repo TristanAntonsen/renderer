@@ -32,16 +32,16 @@ pub fn render(camera: &Camera, world: &World) -> Canvas {
 pub struct Camera {
     pub hsize: u32,
     pub vsize: u32,
-    pub field_of_view: f32,
-    pub pixel_size: f32,
-    pub half_width: f32,
-    pub half_height: f32,
-    pub transform: Matrix4<f32>
+    pub field_of_view: f64,
+    pub pixel_size: f64,
+    pub half_width: f64,
+    pub half_height: f64,
+    pub transform: Matrix4<f64>
 
 }
 
 impl Camera {
-    pub fn default(hsize: u32, vsize: u32, fov: f32) -> Self {
+    pub fn default(hsize: u32, vsize: u32, fov: f64) -> Self {
         let mut default_cam = Self {
             hsize,
             vsize,
@@ -65,7 +65,7 @@ impl Camera {
     
     pub fn pixel_size(&mut self) {
         let half_view = (self.field_of_view / 2.0).tan();
-        let aspect = (self.hsize as f32/ self.vsize as f32);
+        let aspect = (self.hsize as f64/ self.vsize as f64);
         let (half_width, half_height);
         if aspect >= 1.0 {
             half_width = half_view;
@@ -77,7 +77,7 @@ impl Camera {
 
         self.half_width = half_width;
         self.half_height = half_height;
-        self.pixel_size = (half_width * 2.0) / self.hsize as f32;
+        self.pixel_size = (half_width * 2.0) / self.hsize as f64;
 
     }
 }
@@ -86,8 +86,8 @@ pub fn ray_for_pixel(camera: &Camera, px: u32, py: u32) -> Ray {
     let pixel_size = camera.pixel_size;
 
     // offset from edge of canvas to pixel
-    let x_offset = (0.5 + px as f32) * pixel_size;
-    let y_offset = (0.5 + py as f32) * pixel_size;
+    let x_offset = (0.5 + px as f64) * pixel_size;
+    let y_offset = (0.5 + py as f64) * pixel_size;
 
     // untransformed coordinates of the pixel in world space
     // (camera looks toward -z, so +x is to the left)
@@ -110,7 +110,7 @@ pub fn ray_for_pixel(camera: &Camera, px: u32, py: u32) -> Ray {
 
 }
 
-pub fn is_shadowed(world: &World, point: Matrix4x1<f32>) -> bool {
+pub fn is_shadowed(world: &World, point: Matrix4x1<f64>) -> bool {
 
     let v = world.lights[0].position - point;
     let distance = v.magnitude();
@@ -133,9 +133,9 @@ pub fn is_shadowed(world: &World, point: Matrix4x1<f32>) -> bool {
 
 }
 
-pub fn color_at(world: &World, ray: &Ray) -> [f32; 3] {
+pub fn color_at(world: &World, ray: &Ray) -> [f64; 3] {
     let world_ints = intersect_world(ray, &world);
-    let color : [f32; 3];
+    let color : [f64; 3];
     if let Some(h) = world_ints.hit() {
         // if there is a valid intersection, compute the color
         let comps = prepare_computations(&h, ray);
@@ -147,9 +147,10 @@ pub fn color_at(world: &World, ray: &Ray) -> [f32; 3] {
     return color
 }
 
-pub fn shade_hit(world: &World, comps: &Comps) -> [f32; 3] {
+pub fn shade_hit(world: &World, comps: &Comps) -> [f64; 3] {
 
     let shadowed = is_shadowed(world, comps.over_point);
+    let shadowed = false;
 
     lighting(
         &comps.object.material,
@@ -161,7 +162,7 @@ pub fn shade_hit(world: &World, comps: &Comps) -> [f32; 3] {
     )
 }
 
-pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f32>, eyev: Matrix4x1<f32>, normalv: Matrix4x1<f32>, is_shadowed: bool) -> [f32; 3] {
+pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f64>, eyev: Matrix4x1<f64>, normalv: Matrix4x1<f64>, is_shadowed: bool) -> [f64; 3] {
     
     //color to turn into final color
     let mut color = material.color;
@@ -181,9 +182,9 @@ pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f32>, 
 
     let mut diffuse = color.clone();    
     let mut specular = [0.0,0.0,0.0];
-    let reflectv: Matrix4x1<f32>;
-    let reflect_dot_eye: f32;
-    let factor: f32;
+    let reflectv: Matrix4x1<f64>;
+    let reflect_dot_eye: f64;
+    let factor: f64;
 
     if light_dot_normal < 0.0 { // not visible
         // specular & diffuse are [0,0,0]

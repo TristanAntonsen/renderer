@@ -24,7 +24,7 @@ impl World {
     }
 }
 
-pub fn view_transform(from: Matrix4x1<f32>, to: Matrix4x1<f32>, up: Matrix4x1<f32>) -> Matrix4<f32>{
+pub fn view_transform(from: Matrix4x1<f64>, to: Matrix4x1<f64>, up: Matrix4x1<f64>) -> Matrix4<f64>{
 
     // from: camera/eye
     // to: point to look at

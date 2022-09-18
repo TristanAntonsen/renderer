@@ -5,14 +5,14 @@ use crate::Projectile;
 use crate::constants::Ray;
 use std::f64::consts::PI;
 
-pub fn is_point(tuple: Matrix1x4<f32>) -> bool {
+pub fn is_point(tuple: Matrix1x4<f64>) -> bool {
     match tuple[3] {
         1.0 => return true,
         _ => return false
     }
 }
 
-pub fn is_vector(tuple: Matrix1x4<f32>) -> bool {
+pub fn is_vector(tuple: Matrix1x4<f64>) -> bool {
     match tuple[3] {
         0.0 => return true,
         _ => return false
@@ -26,18 +26,18 @@ pub fn clock(mut canvas: Canvas) -> Canvas{
     let tau = 2.0 * PI;
     let theta_increment = tau / divisions as f64;
 
-    let radius: f32 = canvas.pixels.len() as f32 * 0.375;
+    let radius: f64 = canvas.pixels.len() as f64 * 0.375;
     let mut point = Matrix4x1::new(radius,0.0,0.0,1.0);
     let mut temp_point = Matrix4x1::new(0.0,0.0,0.0,1.0);
     
     let translation_matrix = Matrix4::new(
-        1.0, 0.0, 0.0, canvas.pixels.len() as f32 / 2.0,
-        0.0, 1.0, 0.0, canvas.pixels.len() as f32 / 2.0,
+        1.0, 0.0, 0.0, canvas.pixels.len() as f64 / 2.0,
+        0.0, 1.0, 0.0, canvas.pixels.len() as f64 / 2.0,
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0
     );
 
-    let mut theta = theta_increment as f32;
+    let mut theta = theta_increment as f64;
     let mut x;
     let mut y;
 
@@ -73,7 +73,7 @@ pub fn clock(mut canvas: Canvas) -> Canvas{
 
 
 
-pub fn launch(mut canvas: Canvas, env: Env, position: Matrix1x4<f32>, velocity: Matrix1x4<f32>) -> Canvas {
+pub fn launch(mut canvas: Canvas, env: Env, position: Matrix1x4<f64>, velocity: Matrix1x4<f64>) -> Canvas {
 
     // let mut point: &position;
     let mut projectile = Projectile {

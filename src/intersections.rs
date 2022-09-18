@@ -12,7 +12,7 @@ pub struct Intersections<'a> {
 }
 // intersection structure for t and object for given intersection
 pub struct Intersection<'a> {
-    pub t : f32,
+    pub t : f64,
     pub object: &'a Sphere // object must outlive Intersection
 }
 
@@ -35,7 +35,7 @@ impl<'a> Intersections<'a> {
     pub fn hit(mut self) -> Option<Intersection<'a>> {
 
         //collect t values of self into a vector
-        // let mut t_vals = self.collection.iter().map(|I| I.t).collect::<Vec<f32>>();
+        // let mut t_vals = self.collection.iter().map(|I| I.t).collect::<Vec<f64>>();
         
         self.collection.sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap()); //sorting by t1
 
@@ -50,7 +50,7 @@ impl<'a> Intersections<'a> {
 }
 
 impl<'a> Intersection<'a> { //trait must also outlive Intersection
-    pub fn new(t: f32, s: &'a Sphere) -> Self {
+    pub fn new(t: f64, s: &'a Sphere) -> Self {
         Self {
             t: t,
             object: s
@@ -62,10 +62,10 @@ impl<'a> Intersection<'a> { //trait must also outlive Intersection
 
 pub struct Comps<'a> {
     pub object: &'a Sphere,
-    pub point: Matrix4x1<f32>,
-    pub over_point: Matrix4x1<f32>,
-    pub eyev: Matrix4x1<f32>,
-    pub normalv: Matrix4x1<f32>,
+    pub point: Matrix4x1<f64>,
+    pub over_point: Matrix4x1<f64>,
+    pub eyev: Matrix4x1<f64>,
+    pub normalv: Matrix4x1<f64>,
     pub inside: bool
 }
 
@@ -118,7 +118,7 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
 // ------------ OBJECT INTERSECTION FUNCTIONS -------------
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
-pub fn intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f32, f32)> {
+pub fn intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f64, f64)> {
 
     // transform ray prior to calculation
     // multiply by the inverse of sphere.transform

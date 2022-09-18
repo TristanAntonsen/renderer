@@ -8,7 +8,7 @@ mod ray;
 mod renderer;
 mod world;
 
-use std::f32::consts::PI;
+use std::f64::consts::PI;
 
 use constants::Canvas;
 use geometry::{normal_at, scaling, translation, Sphere, rotation_x,rotation_y};

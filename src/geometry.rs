@@ -3,9 +3,9 @@ use crate::material::Material;
 
 // struct for Sphere object used for calculating intersections
 pub struct Sphere {
-    pub origin: Matrix4x1<f32>,
-    pub radius: f32,
-    pub transform: Matrix4<f32>,
+    pub origin: Matrix4x1<f64>,
+    pub radius: f64,
+    pub transform: Matrix4<f64>,
     pub material: Material
 }
 
@@ -23,7 +23,7 @@ impl Sphere {
             material: Material::default()
         }
     }
-    pub fn new(x: f32, y: f32, z: f32, radius: f32) -> Self {
+    pub fn new(x: f64, y: f64, z: f64, radius: f64) -> Self {
         Self {
             origin: Matrix4x1::new(x,y,z,1.0),
             radius: radius,
@@ -37,7 +37,7 @@ impl Sphere {
         }
     }
 
-    pub fn set_transform(&mut self, transform: Matrix4<f32>) {
+    pub fn set_transform(&mut self, transform: Matrix4<f64>) {
         self.transform = transform
     }
 }
@@ -45,16 +45,16 @@ impl Sphere {
 
 //assumes form of [x,y,z,1] (w = 1 means Point)
 pub struct _Point {
-    pub pos: [f32; 4],
+    pub pos: [f64; 4],
 }
 
 //assumes form of [i,j,k,1] (w = 0 means Vector)
 pub struct _Vector {
-    pub dir: [f32; 4],
+    pub dir: [f64; 4],
 }
 
 impl _Point {
-    pub fn _new(x: f32, y: f32, z: f32) -> Self {
+    pub fn _new(x: f64, y: f64, z: f64) -> Self {
         Self {
             pos: [x, y, z, 1.0],
         }
@@ -62,7 +62,7 @@ impl _Point {
 }
 
 impl _Vector {
-    pub fn _new(x: f32, y: f32, z: f32) -> Self {
+    pub fn _new(x: f64, y: f64, z: f64) -> Self {
         Self {
             dir: [x, y, z, 0.0],
         }
@@ -71,7 +71,7 @@ impl _Vector {
 
 // // ---------- Normals ----------
 
-pub fn normal_at(sphere: &Sphere, world_point: Matrix4x1<f32>) -> Matrix4x1<f32> {
+pub fn normal_at(sphere: &Sphere, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
     // inverse of sphere transformation * the point in world space
     let object_point = sphere.transform.try_inverse().unwrap() * world_point;
 
@@ -94,7 +94,7 @@ pub fn normal_at(sphere: &Sphere, world_point: Matrix4x1<f32>) -> Matrix4x1<f32>
 // ---------- Transformations ----------
 // to do: shear and rotate
 
-pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4<f32> {
+pub fn scaling(x: f64, y: f64, z: f64) -> Matrix4<f64> {
 
     Matrix4::new(
         x, 0.0, 0.0, 0.0,
@@ -104,7 +104,7 @@ pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4<f32> {
     )
 }
 
-pub fn translation(x: f32, y: f32, z: f32) -> Matrix4<f32> {
+pub fn translation(x: f64, y: f64, z: f64) -> Matrix4<f64> {
 
     Matrix4::new(
         1.0, 0.0, 0.0, x,
@@ -114,7 +114,7 @@ pub fn translation(x: f32, y: f32, z: f32) -> Matrix4<f32> {
     )
 }
 
-pub fn rotation_x(theta: f32) -> Matrix4<f32> {
+pub fn rotation_x(theta: f64) -> Matrix4<f64> {
 
     Matrix4::new(
         1.0, 0.0,         0.0,          0.0,
@@ -124,7 +124,7 @@ pub fn rotation_x(theta: f32) -> Matrix4<f32> {
     )
 }
 
-pub fn rotation_y(theta: f32) -> Matrix4<f32> {
+pub fn rotation_y(theta: f64) -> Matrix4<f64> {
 
     Matrix4::new(
         theta.cos(),  0.0,  theta.sin(),   0.0,
@@ -134,7 +134,7 @@ pub fn rotation_y(theta: f32) -> Matrix4<f32> {
     )
 }
 
-pub fn rotation_z(theta: f32) -> Matrix4<f32> {
+pub fn rotation_z(theta: f64) -> Matrix4<f64> {
 
     Matrix4::new(
         theta.cos(),  -theta.sin(),  0.0,   0.0,
@@ -144,7 +144,7 @@ pub fn rotation_z(theta: f32) -> Matrix4<f32> {
     )
 }
 
-pub fn cross_4(v1: &Matrix4x1<f32>, v2: &Matrix4x1<f32>) -> Matrix4x1<f32> {
+pub fn cross_4(v1: &Matrix4x1<f64>, v2: &Matrix4x1<f64>) -> Matrix4x1<f64> {
 
     let tmp_a = Matrix3x1::new(v1[0], v1[1], v1[2]); // not a good way to do this, fix later
     let tmp_b = Matrix3x1::new(v2[0], v2[1], v2[2]); // not a good way to do this, fix later
@@ -161,7 +161,7 @@ pub fn cross_4(v1: &Matrix4x1<f32>, v2: &Matrix4x1<f32>) -> Matrix4x1<f32> {
 }
 
 // may slow things down, revisit later
-pub fn norm_3(v: &Matrix4x1<f32>) -> Matrix4x1<f32>{
+pub fn norm_3(v: &Matrix4x1<f64>) -> Matrix4x1<f64>{
 
     let v_sub = Matrix3x1::new(v[0], v[1], v[2]).normalize();
 

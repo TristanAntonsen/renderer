@@ -1,11 +1,11 @@
 use nalgebra::{Matrix4x1, Matrix4};
 
 
-pub fn reflect(in_vector:Matrix4x1<f32>, normal: Matrix4x1<f32>) -> Matrix4x1<f32> {
+pub fn reflect(in_vector:Matrix4x1<f64>, normal: Matrix4x1<f64>) -> Matrix4x1<f64> {
     return in_vector - normal * 2.0 * in_vector.dot(&normal)
 }
 
-pub fn position(ray: &Ray, t: f32) -> Matrix4x1<f32> {
+pub fn position(ray: &Ray, t: f64) -> Matrix4x1<f64> {
     let pos = ray.origin + ray.direction * t;
 
     return pos
@@ -13,12 +13,12 @@ pub fn position(ray: &Ray, t: f32) -> Matrix4x1<f32> {
 
 #[derive(Clone)]
 pub struct Ray {
-    pub origin: Matrix4x1<f32>,
-    pub direction: Matrix4x1<f32>
+    pub origin: Matrix4x1<f64>,
+    pub direction: Matrix4x1<f64>
 }
 
 impl Ray {
-    pub fn translate(&self, x: f32, y: f32, z: f32) -> Ray {
+    pub fn translate(&self, x: f64, y: f64, z: f64) -> Ray {
 
         let mut new_ray = self.clone();
         let translation_matrix = Matrix4::new(
@@ -32,7 +32,7 @@ impl Ray {
 
         new_ray
     }
-    pub fn scale(&self, x: f32, y: f32, z: f32) -> Ray {
+    pub fn scale(&self, x: f64, y: f64, z: f64) -> Ray {
 
         let mut new_ray = self.clone();
         let scaling_matrix = Matrix4::new(
@@ -46,7 +46,7 @@ impl Ray {
         new_ray.direction = scaling_matrix * self.direction;
         new_ray
     }
-    pub fn transform(&self, mat: Matrix4<f32>) -> Ray {
+    pub fn transform(&self, mat: Matrix4<f64>) -> Ray {
         // to do:
         // try making the matrix a struct/enum with a translation type and translation type
 

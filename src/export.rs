@@ -41,7 +41,7 @@ pub fn _save_png(path: &str, canvas: Canvas) {
     let mut r;
     let mut g;
     let mut b;
-    let mut color: [f32; 3];
+    let mut color: [f64; 3];
     for x in 0..width {
         for y in 0..height {
             color = canvas.pixels[x as usize][y as usize];

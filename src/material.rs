@@ -1,15 +1,15 @@
 use nalgebra::Matrix4x1;
 
 pub struct Material {
-    pub color: [f32; 3],
-    pub ambient: f32,
-    pub diffuse: f32,
-    pub specular: f32,
-    pub shininess: f32,
+    pub color: [f64; 3],
+    pub ambient: f64,
+    pub diffuse: f64,
+    pub specular: f64,
+    pub shininess: f64,
 }
 
 impl Material {
-    pub fn new(color: [f32; 3], ambient: f32, diffuse: f32, specular: f32, shininess: f32) -> Self {
+    pub fn new(color: [f64; 3], ambient: f64, diffuse: f64, specular: f64, shininess: f64) -> Self {
         Self {
             color,
             ambient,
@@ -30,12 +30,12 @@ impl Material {
     }
 }
 
-pub fn color_from_rgb(r: u32, g: u32, b: u32) -> [f32; 3] {
+pub fn color_from_rgb(r: u32, g: u32, b: u32) -> [f64; 3] {
 
     [
-        r as f32 / 255.0,
-        g as f32 / 255.0,
-        b as f32 / 255.0,
+        r as f64 / 255.0,
+        g as f64 / 255.0,
+        b as f64 / 255.0,
     ]
 
 }

@@ -1,4 +1,4 @@
-use crate::geometry::{Shape,translation, cross_4};
+use crate::geometry::{Shape,scaling, translation, cross_4};
 use crate::light::PointLight;
 use nalgebra::{Matrix4x1, Matrix4};
 pub struct World {
@@ -13,8 +13,9 @@ impl World {
     }
 
     pub fn default() -> Self {
-        let outer_sphere = Shape::new(0.0, 0.0, 0.0, 1.0);
-        let inner_sphere = Shape::new(0.0, 0.0, 0.0, 0.5);
+        let mut outer_sphere = Shape::default_sphere();
+        let mut inner_sphere = Shape::default_sphere();
+        inner_sphere.set_transform(scaling(0.5, 0.5, 0.5));
         let light = PointLight::new(1.0, Matrix4x1::new(-10.0, 10.0, -10.0, 1.0));
 
         Self {

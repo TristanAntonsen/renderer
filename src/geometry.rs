@@ -1,10 +1,31 @@
 use nalgebra::{Matrix4x1, Matrix4, Matrix3x1};
 use crate::material::Material;
 
+// abstracting a shape object used for calculating intersections
+pub struct Shape {
+    pub origin: Matrix4x1<f64>,
+    pub transform: Matrix4<f64>,
+    pub material: Material
+}
+
+impl Shape {
+    pub fn test_shape() -> Self {
+        Self {
+            origin: Matrix4x1::new(0.0,0.0,0.0,1.0),
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0,
+            ),
+            material: Material::default()
+        }
+    }
+}
+
 // struct for Sphere object used for calculating intersections
 pub struct Sphere {
     pub origin: Matrix4x1<f64>,
-    pub radius: f64,
     pub transform: Matrix4<f64>,
     pub material: Material
 }
@@ -13,7 +34,6 @@ impl Sphere {
     pub fn default() -> Self {
         Self {
             origin: Matrix4x1::new(0.0,0.0,0.0,1.0),
-            radius: 1.0,
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0,
                 0.0, 1.0, 0.0, 0.0,
@@ -26,7 +46,6 @@ impl Sphere {
     pub fn new(x: f64, y: f64, z: f64, radius: f64) -> Self {
         Self {
             origin: Matrix4x1::new(x,y,z,1.0),
-            radius: radius,
             transform: Matrix4::new(
                 radius, 0.0, 0.0, 0.0,
                 0.0, radius, 0.0, 0.0,

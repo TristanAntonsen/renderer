@@ -1,8 +1,9 @@
-use crate::geometry::{Shape, sphere_normal_at};
+use crate::geometry::{Shape, sphere_normal_at, normal_at};
 use crate::ray::position;
 use crate::ray::Ray;
 use crate::world::World;
 use nalgebra::{Matrix4x1};
+const EPSILON : f64 = 0.00001;
 
 // ------------ INTERSECTION STRUCTS -------------
 
@@ -71,11 +72,10 @@ pub struct Comps<'a> {
 
 
 pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
-    let object = int.object;
+    let object = int.object; 
     let point = position(ray, int.t);
     let inside;
-    let mut normal = sphere_normal_at(object, point);
-    let EPSILON = 0.00001;
+    let mut normal = normal_at(object, point);
     let over_point = point + normal * EPSILON;
     let eyev = -ray.direction;
     if normal.dot(&eyev) < 0.0 {
@@ -126,6 +126,7 @@ pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
     // "local intersect" here until it needs to be moved elsewhere
     match shape.shape_id {
         0 => intersect_sphere(&ray, &shape),
+        1 => intersect_plane(&ray, &shape),
         _ => None
 
     }
@@ -160,6 +161,19 @@ pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
     let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
 
     Some((t1, t2))
+}
+
+pub fn intersect_plane(ray: &Ray, plane: &Shape) -> Option<(f64, f64)> {
+    // if ray is parallel to XY plane
+    let transformation = plane.transform.try_inverse().unwrap();
+    let new_ray = ray.transform(transformation);
+
+    if ray.direction.y.abs() < EPSILON {
+        return None
+    }
+    
+    let t = -&new_ray.origin.y / &new_ray.direction.y;
+    return Some((t, t)) // might need to rework the double t
 }
 
 

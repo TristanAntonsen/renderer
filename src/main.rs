@@ -11,7 +11,7 @@ mod world;
 use std::f64::consts::PI;
 
 use constants::Canvas;
-use geometry::{sphere_normal_at, scaling, translation, Shape, rotation_x,rotation_y};
+use geometry::{sphere_normal_at, scaling, translation, Shape, rotation_x, rotation_y, rotation_z};
 use intersections::{intersect_sphere, intersect_world, Intersection, Intersections, prepare_computations, Comps};
 use light::PointLight;
 use material::{color_from_rgb, Material};
@@ -49,21 +49,24 @@ fn main() {
     world.objects.push(sphere2);
 
 
-    let mut floor = Shape::default_sphere();
+    let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(100,150,100);
-    floor.transform = translation(0.0, -2.0, 0.0) * scaling(15.0, 0.01, 15.0);
+    floor.transform = translation(0.0, -1.75, -3.0);
+    println!("transform: {}", floor.transform);
     world.objects.push(floor);
 
-    
-    let mut wall_2 = Shape::default_sphere();
-    wall_2.material.color = color_from_rgb(100,150,100);
+    let mut wall = Shape::plane();
+    wall.material.color = color_from_rgb(100,150,100);
+    wall.transform = translation(0.0, -1.75, -3.0) *
+                     rotation_y(PI / 8.0) *
+                     rotation_x(PI / 2.0);
+    println!("transform: {}", wall.transform);
+    world.objects.push(wall);
 
-    wall_2.transform = 
-        translation(0.0, 0.0, -5.0) * 
-        rotation_y(PI / 4.0) *
-        rotation_x(PI / 2.0) *
-        scaling(15.0, 0.01, 15.0);
-    world.objects.push(wall_2);
+    for object in world.objects.iter() {
+        println!("id: {}", object.shape_id);
+    }
+
 
     // --------- Camera ----------
     let mut cam = Camera::default(1080, 1080, PI / 6.0);
@@ -78,10 +81,17 @@ fn main() {
     println!("ray direction: {:?}", cam_ray.direction);
 
     // --------- Test ray ----------
-    // let test_ray = Ray {
-    //     origin: Matrix4x1::new(0.0, 0.0, 0.75, 1.0),
-    //     direction: Matrix4x1::new(0.0, 0.0, -1.0, 0.0),
-    // };
+    let test_ray = Ray {
+        origin: Matrix4x1::new(0.0, 0.0, 0.75, 1.0),
+        direction: Matrix4x1::new(0.0, 0.0, -1.0, 0.0),
+    };
+
+    // --------- Test shape intersection ---------
+    // if let Some(i) = intersect_plane(object, ray) {
+    //     // if let Some(i) = intersect_sphere(ray, object) {
+    //         intersections.collection.push(Intersection::new(i.0, &object));
+    //         intersections.collection.push(Intersection::new(i.1, &object));
+    //     }
 
     // --------- Testing render() ----------
 

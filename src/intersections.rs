@@ -1,4 +1,4 @@
-use crate::geometry::{Sphere, Shape, normal_at};
+use crate::geometry::{Shape, normal_at};
 use crate::ray::position;
 use crate::ray::Ray;
 use crate::world::World;
@@ -13,7 +13,7 @@ pub struct Intersections<'a> {
 // intersection structure for t and object for given intersection
 pub struct Intersection<'a> {
     pub t : f64,
-    pub object: &'a Sphere // object must outlive Intersection
+    pub object: &'a Shape // object must outlive Intersection
 }
 
 // ------------ INTERSECTION TRAITS -------------
@@ -50,7 +50,7 @@ impl<'a> Intersections<'a> {
 }
 
 impl<'a> Intersection<'a> { //trait must also outlive Intersection
-    pub fn new(t: f64, s: &'a Sphere) -> Self {
+    pub fn new(t: f64, s: &'a Shape) -> Self {
         Self {
             t: t,
             object: s
@@ -61,7 +61,7 @@ impl<'a> Intersection<'a> { //trait must also outlive Intersection
 // ------------ Precomputing & storing computations ------------
 
 pub struct Comps<'a> {
-    pub object: &'a Sphere,
+    pub object: &'a Shape,
     pub point: Matrix4x1<f64>,
     pub over_point: Matrix4x1<f64>,
     pub eyev: Matrix4x1<f64>,
@@ -128,7 +128,7 @@ pub fn intersect(shape: &Shape, ray: &Ray) {
 // ------------ OBJECT SPECIFIC INTERSECTION FUNCTIONS -------------
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
-pub fn intersect_sphere(ray: &Ray, sphere: &Sphere) -> Option<(f64, f64)> {
+pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
 
     // transform ray prior to calculation
     // multiply by the inverse of sphere.transform

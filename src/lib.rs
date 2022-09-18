@@ -10,7 +10,7 @@ mod world;
 
 #[cfg(test)]
 mod tests {
-    use crate::geometry::{Sphere, _Point};
+    use crate::geometry::{_Point};
     use crate::intersections::{intersect_sphere, Intersection};
     use crate::ray::{Ray,position};
     use nalgebra::{Matrix4, Matrix4x1};

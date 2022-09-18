@@ -11,7 +11,7 @@ mod world;
 use std::f64::consts::PI;
 
 use constants::Canvas;
-use geometry::{normal_at, scaling, translation, Sphere, rotation_x,rotation_y};
+use geometry::{normal_at, scaling, translation, Shape, rotation_x,rotation_y};
 use intersections::{intersect_sphere, intersect_world, Intersection, Intersections, prepare_computations, Comps};
 use light::PointLight;
 use material::{color_from_rgb, Material};
@@ -38,24 +38,24 @@ fn main() {
     world.lights.push(light);
 
     // --------- Objects -----------
-    let mut sphere_1 = Sphere::default();
+    let mut sphere_1 = Shape::default();
     sphere_1.material.color = color_from_rgb(255, 150, 0);
     sphere_1.transform = scaling(1.5, 1.5, 1.5);
     world.objects.push(sphere_1);
 
-    let mut sphere2 = Sphere::default();
+    let mut sphere2 = Shape::default();
     sphere2.material.color = color_from_rgb(255, 0, 255);
     sphere2.transform = translation(2.0,1.0, 1.5) * scaling(0.5, 0.5, 0.5);
     world.objects.push(sphere2);
 
 
-    let mut floor = Sphere::default();
+    let mut floor = Shape::default();
     floor.material.color = color_from_rgb(100,150,100);
     floor.transform = translation(0.0, -2.0, 0.0) * scaling(15.0, 0.01, 15.0);
     world.objects.push(floor);
 
     
-    let mut wall_2 = Sphere::default();
+    let mut wall_2 = Shape::default();
     wall_2.material.color = color_from_rgb(100,150,100);
 
     wall_2.transform = 
@@ -88,5 +88,5 @@ fn main() {
     let image = render(&cam, &world);
 
     // --------- Saving render ----------
-    _save_png("wall_shadows.png", image);
+    _save_png("test_render.png", image);
 }

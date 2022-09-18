@@ -1,9 +1,9 @@
-use crate::geometry::{Sphere, translation, cross_4};
+use crate::geometry::{Shape,translation, cross_4};
 use crate::light::PointLight;
 use nalgebra::{Matrix4x1, Matrix4};
 pub struct World {
     pub lights: Vec<PointLight>,
-    pub objects: Vec<Sphere>,
+    pub objects: Vec<Shape>,
 }
 
 impl World {
@@ -13,8 +13,8 @@ impl World {
     }
 
     pub fn default() -> Self {
-        let outer_sphere = Sphere::new(0.0, 0.0, 0.0, 1.0);
-        let inner_sphere = Sphere::new(0.0, 0.0, 0.0, 0.5);
+        let outer_sphere = Shape::new(0.0, 0.0, 0.0, 1.0);
+        let inner_sphere = Shape::new(0.0, 0.0, 0.0, 0.5);
         let light = PointLight::new(1.0, Matrix4x1::new(-10.0, 10.0, -10.0, 1.0));
 
         Self {

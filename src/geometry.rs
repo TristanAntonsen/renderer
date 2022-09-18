@@ -1,7 +1,7 @@
 use nalgebra::{Matrix4x1, Matrix4, Matrix3x1};
 use crate::material::Material;
 
-// abstracting a shape object used for calculating intersections
+// struct for Sphere object used for calculating intersections
 pub struct Shape {
     pub origin: Matrix4x1<f64>,
     pub transform: Matrix4<f64>,
@@ -21,16 +21,6 @@ impl Shape {
             material: Material::default()
         }
     }
-}
-
-// struct for Sphere object used for calculating intersections
-pub struct Sphere {
-    pub origin: Matrix4x1<f64>,
-    pub transform: Matrix4<f64>,
-    pub material: Material
-}
-
-impl Sphere {
     pub fn default() -> Self {
         Self {
             origin: Matrix4x1::new(0.0,0.0,0.0,1.0),
@@ -90,7 +80,7 @@ impl _Vector {
 
 // // ---------- Normals ----------
 
-pub fn normal_at(sphere: &Sphere, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
+pub fn normal_at(sphere: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
     // inverse of sphere transformation * the point in world space
     let object_point = sphere.transform.try_inverse().unwrap() * world_point;
 

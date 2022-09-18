@@ -11,13 +11,13 @@ mod world;
 use std::f32::consts::PI;
 
 use constants::Canvas;
-use geometry::{normal_at, scaling, translation, Sphere};
+use geometry::{normal_at, scaling, translation, Sphere, rotation_y};
 use intersections::{intersect_sphere, intersect_world, Intersection, Intersections, prepare_computations, Comps};
 use light::PointLight;
 use material::{color_from_rgb, Material};
 use nalgebra::{Matrix4, Matrix4x1, Point};
 use ray::{position, Ray};
-use renderer::{camera_ray, ray_for_pixel};
+use renderer::{render, camera_ray, ray_for_pixel, color_at};
 use world::{World, view_transform};
 
 use crate::{export::_save_png, renderer::{lighting, shade_hit, Camera}};
@@ -47,11 +47,8 @@ fn main() {
     // --------- World -----------
     let mut world = World::default();
     let sphere_index = 0;
-    world.objects[sphere_index].material.color = color_from_rgb(52, 235, 158);
-    // world.objects[sphere_index].set_transform(scaling(2.0,2.0,2.0));
-    world.objects[1].material.color = color_from_rgb(100,100,0);
-    println!("Sphere 1: {:?}", world.objects[0].radius);
-    println!("Sphere 2: {:?}", world.objects[1].radius);
+    world.objects[sphere_index].material.color = color_from_rgb(255, 0, 0);
+    world.objects[sphere_index].set_transform(translation(0.0, 0.0, -2.0));
 
     // --------- Initializing other variables ----------
     let x_inc = wall_x / X_RES as f32;
@@ -64,8 +61,8 @@ fn main() {
     // let mut t;
 
     // --------- Camera ----------
-    let mut cam = Camera::default(101, 201, PI / 2.0);
-
+    let mut cam = Camera::default(500, 500, PI / 2.0);
+    // cam.transform = rotation_y(PI / 4.0) * translation(0.0, -2.0, 5.0);
     println!("Camera params:");
     println!("\thsize: {}", &cam.hsize);
     println!("\tvsize: {}", &cam.vsize);
@@ -77,8 +74,9 @@ fn main() {
 
     // --------- Testing ray_for_pixel ----------
 
-    let cam_ray = ray_for_pixel(&cam, 50, 100);
-
+    let cam_ray = ray_for_pixel(&cam, 5, 5);
+    let test_color = color_at(&world, &cam_ray);
+    println!("test color: {:?}",test_color);
     println!("ray origin: {:?}", cam_ray.origin);
     println!("ray direction: {:?}", cam_ray.direction);
 
@@ -87,6 +85,10 @@ fn main() {
         origin: Matrix4x1::new(0.0, 0.0, 0.75, 1.0),
         direction: Matrix4x1::new(0.0, 0.0, -1.0, 0.0),
     };
+
+    // --------- Testing render() ----------
+
+    let image = render(&cam, &world);
 
     // ------------------------------------
     // --------- Main loop start ----------
@@ -117,5 +119,5 @@ fn main() {
     // -----------------------------------------
 
     // --------- Saving render ---------- d
-    // _save_png("sphere.png", canvas);
+    _save_png("test_render.png", image);
 }

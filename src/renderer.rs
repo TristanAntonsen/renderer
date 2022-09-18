@@ -4,7 +4,33 @@ use crate::light::PointLight;
 use crate::world::World;
 use crate::intersections::{Comps, intersect_world, prepare_computations};
 use crate::geometry::{norm_3, cross_4};
+use crate::constants::Canvas;
+use image::imageops::colorops;
 use nalgebra::{Matrix4x1, Matrix4};
+
+
+pub fn render(camera: &Camera, world: &World) -> Canvas {
+    let mut image = Canvas::new(camera.hsize as usize, camera.vsize as usize);
+    let X_RES = camera.hsize;
+    let Y_RES = camera.vsize;
+
+    let (mut ray, mut color);
+
+    for y in 0..Y_RES - 1 {
+            for x in 0..X_RES - 1 {
+            ray = ray_for_pixel(camera, x, y);
+            color = color_at(world, &ray);
+            // println!("color: {:?}",&color);
+            image.write_pixel(x as usize, y as usize, color);
+        }
+    }
+
+    image
+}
+
+
+
+
 pub struct Camera {
     pub hsize: u32,
     pub vsize: u32,
@@ -41,9 +67,7 @@ impl Camera {
     
     pub fn pixel_size(&mut self) {
         let half_view = (self.field_of_view / 2.0).tan();
-        println!("\thalf_view: {}", &half_view);
         let aspect = (self.hsize as f32/ self.vsize as f32);
-        println!("\taspect: {}", &aspect);
         let (half_width, half_height);
         if aspect >= 1.0 {
             half_width = half_view;
@@ -66,27 +90,21 @@ pub fn ray_for_pixel(camera: &Camera, px: u32, py: u32) -> Ray {
     // offset from edge of canvas to pixel
     let x_offset = (0.5 + px as f32) * pixel_size;
     let y_offset = (0.5 + py as f32) * pixel_size;
-    println!("x_offset: {}", x_offset);
-    println!("y_offset: {}", y_offset);
 
     // untransformed coordinates of the pixel in world space
     // (camera looks toward -z, so +x is to the left)
     let world_x = camera.half_width - x_offset; 
     let world_y = camera.half_height - y_offset;
-    println!("world_x: {}", world_x);
-    println!("world_y: {}", world_y);
 
     // transforming the canvas point & origin using the camera matrix
     // & computing the ray's direction vector
     // canvas @ z = -1
     let cam_transf_inv = camera.transform.try_inverse().unwrap();
     let pixel = cam_transf_inv * Matrix4x1::new(world_x, world_y, -1.0, 1.0);
-    println!("pixel: {:?}", pixel);
     
     let origin = cam_transf_inv * Matrix4x1::new(0.0,0.0,0.0,1.0);
     // let direction = norm_3(&(pixel - origin)); // need to normalize without the 4th element
     let direction = (pixel - origin).normalize(); // need to normalize without the 4th element
-
     Ray {
         origin,
         direction

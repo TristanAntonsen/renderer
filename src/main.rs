@@ -20,7 +20,7 @@ use ray::{position, Ray};
 use renderer::{render, ray_for_pixel, color_at};
 use world::{World, view_transform};
 
-use crate::{export::_save_png, renderer::{lighting, shade_hit, Camera}};
+use crate::{export::_save_png, renderer::{lighting, shade_hit, Camera, is_shadowed}};
 extern crate image;
 
 fn main() {
@@ -40,6 +40,12 @@ fn main() {
     // --------- Objects -----------
 
     // world.objects[0].transform = translation(0.0, -1.0, 0.0);
+
+    // --------- testing is_shadowed -----------
+    let pt = Matrix4x1::new(-2.0,2.0,-2.0,1.0);
+
+    let shadowed = is_shadowed(&world, pt);
+    println!("Shadowed: {}",shadowed);
 
     // --------- Camera ----------
     let mut cam = Camera::default(1080, 1080, PI / 6.0);

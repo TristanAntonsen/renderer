@@ -2,7 +2,7 @@ use crate::ray::{Ray,reflect};
 use crate::material::Material;
 use crate::light::PointLight;
 use crate::world::World;
-use crate::intersections::{Comps, intersect_world, prepare_computations};
+use crate::intersections::{Comps, intersect_world, prepare_computations, self};
 use crate::geometry::{norm_3, cross_4};
 use crate::constants::Canvas;
 use image::imageops::colorops;
@@ -107,6 +107,29 @@ pub fn ray_for_pixel(camera: &Camera, px: u32, py: u32) -> Ray {
         origin,
         direction
     }
+
+}
+
+pub fn is_shadowed(world: &World, point: Matrix4x1<f32>) -> bool {
+
+    let v = world.lights[0].position - point;
+    let distance = v.magnitude();
+    let direction = v.normalize();
+
+    let ray = Ray {
+        origin: point,
+        direction: direction
+    };
+
+    let intersections = intersect_world(&ray, world);
+
+    if let Some(h) = intersections.hit() {
+        if h.t < distance {
+            return true
+        }
+    }
+
+    false
 
 }
 

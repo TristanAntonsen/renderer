@@ -19,7 +19,7 @@ impl World {
 
         Self {
             lights: vec![light],
-            objects: vec![outer_sphere],
+            objects: vec![outer_sphere, inner_sphere],
         }
     }
 }

@@ -150,7 +150,7 @@ pub fn color_at(world: &World, ray: &Ray) -> [f64; 3] {
 pub fn shade_hit(world: &World, comps: &Comps) -> [f64; 3] {
 
     let shadowed = is_shadowed(world, comps.over_point);
-    let shadowed = false;
+    // let shadowed = false;
 
     lighting(
         &comps.object.material,

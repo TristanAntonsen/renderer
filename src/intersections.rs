@@ -72,15 +72,12 @@ pub struct Comps<'a> {
 pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
     let object = int.object;
     let point = position(ray, int.t);
-    println!("t: {}", int.t);
     let inside;
     let mut normal = normal_at(object, point);
     let eyev = -ray.direction;
-    println!("Ray origin: {:?}", ray.origin);
     if normal.dot(&eyev) < 0.0 {
         inside = true;
         normal = -normal;
-        println!("Inside!");
     } else {
         inside = false;
     }
@@ -105,8 +102,6 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
         if let Some(i) = intersect_sphere(&ray, &object) {
             intersections.collection.push(Intersection::new(i.0, &object));
             intersections.collection.push(Intersection::new(i.1, &object));
-            println!("t1: {}", i.0);
-            println!("t2: {}", i.1);
         }
     }
 

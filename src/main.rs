@@ -20,7 +20,7 @@ use ray::{position, Ray};
 use renderer::{render, ray_for_pixel, color_at};
 use world::{World, view_transform};
 
-use crate::{export::_save_png, renderer::{lighting, shade_hit, Camera, is_shadowed}};
+use crate::{export::_save_png, renderer::{lighting, shade_hit, Camera}};
 extern crate image;
 
 fn main() {
@@ -30,7 +30,7 @@ fn main() {
 
     
     // --------- World -----------
-    let mut world = World::default();
+    let mut world = World::new();
 
     // --------- Light ----------
     let mut light = PointLight::new(1.0, Matrix4x1::new(10.0, 5.0, 5.0, 1.0));
@@ -38,14 +38,45 @@ fn main() {
     world.lights.push(light);
 
     // --------- Objects -----------
+    let mut sphere_1 = Sphere::default();
+    sphere_1.material.color = color_from_rgb(255, 150, 0);
+    sphere_1.transform = scaling(1.25, 1.25, 1.25) * translation(-0.75, -0.5, 3.0);
+    world.objects.push(sphere_1);
 
-    // world.objects[0].transform = translation(0.0, -1.0, 0.0);
+    let mut sphere2 = Sphere::default();
+    sphere2.material.color = color_from_rgb(255, 255, 255);
+    sphere2.transform = translation(2.5,0.0, 0.0);
+    world.objects.push(sphere2);
 
-    // --------- testing is_shadowed -----------
-    let pt = Matrix4x1::new(-2.0,2.0,-2.0,1.0);
+    let mut sphere3 = Sphere::default();
+    sphere3.material.color = color_from_rgb(200,0,200);
+    sphere3.transform = translation(0.0, 2.5, 0.0);
+    world.objects.push(sphere3);
 
-    let shadowed = is_shadowed(&world, pt);
-    println!("Shadowed: {}",shadowed);
+    let mut floor = Sphere::default();
+    floor.material.color = color_from_rgb(100,100,100);
+    floor.transform = translation(0.0, -2.0, 0.0) * scaling(15.0, 0.01, 15.0);
+    world.objects.push(floor);
+
+
+    let mut wall_1 = Sphere::default();
+    wall_1.material.color = color_from_rgb(100,100,100);
+    wall_1.transform = 
+        translation(0.0, 0.0, -5.0) * 
+        rotation_y(-PI / 4.0) *
+        rotation_x(PI / 2.0) *
+        scaling(15.0, 0.01, 15.0);
+    world.objects.push(wall_1);
+    
+    let mut wall_2 = Sphere::default();
+    wall_2.material.color = color_from_rgb(100,100,100);
+
+    wall_2.transform = 
+        translation(0.0, 0.0, -5.0) * 
+        rotation_y(PI / 4.0) *
+        rotation_x(PI / 2.0) *
+        scaling(15.0, 0.01, 15.0);
+    world.objects.push(wall_2);
 
     // --------- Camera ----------
     let mut cam = Camera::default(1080, 1080, PI / 6.0);

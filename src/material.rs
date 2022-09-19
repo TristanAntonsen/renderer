@@ -34,7 +34,7 @@ impl Pattern {
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 0
+            type_id : 1
         }
     }
 
@@ -44,7 +44,17 @@ impl Pattern {
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 1
+            type_id : 2
+        }
+    }
+
+    pub fn rings(a: [f64;3], b: [f64;3]) -> Self {
+        Self {
+            colors: vec![a, b],
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+            ),
+            type_id : 3
         }
     }
 
@@ -61,9 +71,10 @@ pub fn pattern_at_shape(pattern: &Pattern, object: &Shape, world_point: Matrix4x
 pub fn pattern_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
 
     match pattern.type_id {
-        0 => gradient_at(pattern, point),
-        1 => stripe_at(pattern, point),
-        _ => stripe_at(pattern, point)
+        1 => gradient_at(pattern, point),
+        2 => stripe_at(pattern, point),
+        3 => rings_at(pattern, point),
+        _ => rings_at(pattern, point)
     }
 
 }
@@ -88,6 +99,16 @@ pub fn stripe_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
     // Alternate only in X
     let x = point[0];
     if x.floor() % 2.0 == 0.0 {
+        pattern.colors[0]
+    } else {
+        pattern.colors[1]
+    }
+}
+
+pub fn rings_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
+    // Rings based on X & Z
+    let d = (point[0].powf(2.0) + point[2].powf(2.0)).sqrt();
+    if d.floor() % 2.0 == 0.0 {
         pattern.colors[0]
     } else {
         pattern.colors[1]

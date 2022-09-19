@@ -45,11 +45,6 @@ fn main() {
     let mut sphere_1 = Shape::default_sphere();
     sphere_1.material.color = color_from_rgb(255, 150, 0);
     sphere_1.transform = scaling(1.5, 1.5, 1.5);
-    sphere_1.material.pattern = Pattern::gradient(
-        color_from_rgb(100, 255, 100),
-        color_from_rgb(50, 50, 50)
-    );
-    sphere_1.material.pattern.transform = scaling(0.5, 0.5, 0.5);
     world.objects.push(sphere_1);
 
     let mut sphere2 = Shape::default_sphere();
@@ -60,6 +55,10 @@ fn main() {
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(100, 150, 100);
     floor.transform = translation(0.0, -1.75, -3.0);
+    floor.material.pattern = Pattern::rings(
+        color_from_rgb(100, 255, 100),
+        color_from_rgb(50, 50, 50)
+    );
     world.objects.push(floor);
 
     let mut wall = Shape::plane();

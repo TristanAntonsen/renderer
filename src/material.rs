@@ -24,7 +24,17 @@ impl Pattern {
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 1
+            type_id : 0
+        }
+    }
+
+    pub fn gradient(a: [f64;3], b: [f64;3]) -> Self {
+        Self {
+            colors: vec![a, b],
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+            ),
+            type_id : 0
         }
     }
 
@@ -37,6 +47,7 @@ impl Pattern {
             type_id : 1
         }
     }
+
 }
 
 pub fn pattern_at_shape(pattern: &Pattern, object: &Shape, world_point: Matrix4x1<f64>) -> [f64; 3] {
@@ -50,12 +61,28 @@ pub fn pattern_at_shape(pattern: &Pattern, object: &Shape, world_point: Matrix4x
 pub fn pattern_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
 
     match pattern.type_id {
+        0 => gradient_at(pattern, point),
         1 => stripe_at(pattern, point),
         _ => stripe_at(pattern, point)
     }
 
 }
 
+
+pub fn gradient_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
+    // Gradient in X direction
+    let fraction = point.x - point.x.floor();
+    let gradient = [ // do this in a more intelligent way
+        // color a + distance * fraction
+        pattern.colors[0][0] + (pattern.colors[1][0] - pattern.colors[0][0]) * fraction,
+        pattern.colors[0][1] + (pattern.colors[1][1] - pattern.colors[0][1]) * fraction,
+        pattern.colors[0][2] + (pattern.colors[1][2] - pattern.colors[0][2]) * fraction,
+        ];
+
+
+    gradient
+
+}
 
 pub fn stripe_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
     // Alternate only in X

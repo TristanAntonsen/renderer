@@ -41,50 +41,31 @@ fn main() {
     light.intensity = 1.0;
     world.lights.push(light);
 
-    // --------- Pattern -----------
-    let stripes = Pattern::stripe(
-        color_from_rgb(100, 255, 100),
-        color_from_rgb(50, 50, 50)
-    );
-
     // --------- Objects -----------
     let mut sphere_1 = Shape::default_sphere();
     sphere_1.material.color = color_from_rgb(255, 150, 0);
     sphere_1.transform = scaling(1.5, 1.5, 1.5);
-    sphere_1.material.pattern = Pattern::stripe(
+    sphere_1.material.pattern = Pattern::gradient(
         color_from_rgb(100, 255, 100),
         color_from_rgb(50, 50, 50)
     );
-    sphere_1.material.pattern.transform = rotation_y(PI / 4.0) * scaling(0.1, 1.0, 1.0);
+    sphere_1.material.pattern.transform = scaling(0.5, 0.5, 0.5);
     world.objects.push(sphere_1);
 
     let mut sphere2 = Shape::default_sphere();
     sphere2.material.color = color_from_rgb(255, 0, 255);
     sphere2.transform = translation(2.0, 1.0, 1.5) * scaling(0.5, 0.5, 0.5);
-    sphere2.material.pattern = Pattern::stripe(
-        color_from_rgb(100, 255, 100),
-        color_from_rgb(50, 50, 50)
-    );;
-    sphere2.material.pattern.transform = rotation_y(-PI / 4.0) * scaling(0.25, 1.0, 1.0);
     world.objects.push(sphere2);
 
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(100, 150, 100);
     floor.transform = translation(0.0, -1.75, -3.0);
-    floor.material.pattern = Pattern::stripe(
-        color_from_rgb(100, 255, 100),
-        color_from_rgb(50, 50, 50)
-    );
-    floor.material.pattern.transform = scaling(0.1, 1.0, 1.0);
     world.objects.push(floor);
 
     let mut wall = Shape::plane();
     wall.material.color = color_from_rgb(100, 150, 100);
     wall.transform = translation(0.0, -1.75, -3.0) * rotation_y(PI / 8.0) * rotation_x(PI / 2.0);
-    wall.material.pattern = Pattern::stripe(
-        color_from_rgb(100, 255, 100),
-        color_from_rgb(50, 50, 50)
-    );
+
     world.objects.push(wall);
 
     for object in world.objects.iter() {

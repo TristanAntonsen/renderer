@@ -44,30 +44,25 @@ fn main() {
 
     // --------- Objects -----------
     let mut sphere_1 = Shape::default_sphere();
-    sphere_1.material.color = color_from_rgb(255, 150, 0);
-    sphere_1.transform = scaling(1.5, 1.5, 1.5);
-    sphere_1.material.pattern =
-        Pattern::perlin(color_from_rgb(255, 255, 255));
+    sphere_1.material.color = color_from_rgb(43, 48, 58);
     world.objects.push(sphere_1);
 
-    let mut sphere2 = Shape::default_sphere();
-    sphere2.material.color = color_from_rgb(255, 0, 255);
-    sphere2.transform = translation(2.0, 1.0, 1.5) * scaling(0.5, 0.5, 0.5);
-    world.objects.push(sphere2);
+    let mut sphere_2 = Shape::default_sphere();
+    sphere_2.material.color = color_from_rgb(146, 220, 229);
+    sphere_2.transform = translation(2.25, 0.0, 0.0);
+    world.objects.push(sphere_2);
+
+    let mut sphere_3 = Shape::default_sphere();
+    sphere_3.material.color = color_from_rgb(214, 73, 51);
+    sphere_3.transform = translation(-2.25, 0.0, 0.0);
+    world.objects.push(sphere_3);
 
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(100, 150, 100);
-    floor.transform = translation(0.0, -2.0, -3.2);
+    floor.transform = translation(0.0, -1.0, -3.2);
     floor.material.pattern =
-        Pattern::checker(color_from_rgb(100, 255, 100), color_from_rgb(50, 50, 50));
+        Pattern::checker(color_from_rgb(124, 124, 124), color_from_rgb(238, 229, 233));
     world.objects.push(floor);
-
-    let mut wall = Shape::plane();
-    wall.material.color = color_from_rgb(100, 150, 100);
-    wall.transform = translation(0.0, -1.75, -3.0) * rotation_y(PI / 8.0) * rotation_x(PI / 2.0);
-    wall.material.pattern =
-        Pattern::checker(color_from_rgb(100, 255, 100), color_from_rgb(50, 50, 50));
-    world.objects.push(wall);
 
     for object in world.objects.iter() {
         println!("id: {}", object.shape_id);

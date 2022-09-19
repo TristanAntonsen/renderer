@@ -129,7 +129,7 @@ pub fn rings_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
 pub fn checker_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
     // Rings based on X & Z
     let c = point[0].floor() + point[1].floor() + point[2].floor();
-    if c % 2.0 <= 0.0 {
+    if c % 2.0 == 0.0 {
         pattern.colors[0]
     } else {
         pattern.colors[1]

@@ -39,7 +39,7 @@ impl Pattern {
     }
 }
 
-pub fn pattern_at_object(pattern: &Pattern, object: &Shape, world_point: Matrix4x1<f64>) -> [f64; 3] {
+pub fn pattern_at_shape(pattern: &Pattern, object: &Shape, world_point: Matrix4x1<f64>) -> [f64; 3] {
 
     let object_point = object.transform.try_inverse().unwrap() * world_point;
     let pattern_point = pattern.transform.try_inverse().unwrap() * object_point;

@@ -1,5 +1,5 @@
 use crate::ray::{Ray,reflect};
-use crate::material::{Material, Pattern, stripe_at, pattern_at_object};
+use crate::material::{Material, Pattern, stripe_at, pattern_at_shape};
 use crate::light::PointLight;
 use crate::world::World;
 use crate::intersections::{Comps, intersect_world, prepare_computations, self};
@@ -168,7 +168,7 @@ pub fn lighting(material: &Material, object: &Shape, light: &PointLight, point: 
     let mut color = material.color;
 
     if material.pattern.colors.len() != 0 {
-        color = pattern_at_object(&material.pattern, object, point);
+        color = pattern_at_shape(&material.pattern, object, point);
     }
 
     // combining surface color with light's intensity

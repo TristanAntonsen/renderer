@@ -1,5 +1,5 @@
 use crate::geometry::{Shape, sphere_normal_at, normal_at};
-use crate::ray::position;
+use crate::ray::{position, reflect};
 use crate::ray::Ray;
 use crate::world::World;
 use nalgebra::{Matrix4x1};
@@ -67,6 +67,7 @@ pub struct Comps<'a> {
     pub over_point: Matrix4x1<f64>,
     pub eyev: Matrix4x1<f64>,
     pub normalv: Matrix4x1<f64>,
+    pub reflectv: Matrix4x1<f64>,
     pub inside: bool
 }
 
@@ -78,6 +79,8 @@ pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
     let mut normal = normal_at(object, point);
     let over_point = point + normal * EPSILON;
     let eyev = -ray.direction;
+    let reflectv = reflect(ray.direction, normal);
+
     if normal.dot(&eyev) < 0.0 {
         inside = true;
         normal = -normal;
@@ -92,6 +95,7 @@ pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
         over_point,
         eyev,
         normalv : normal,
+        reflectv,
         inside
     }
 }

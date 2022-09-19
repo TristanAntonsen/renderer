@@ -1,8 +1,7 @@
-use std::vec;
+use std::{vec, f64::EPSILON};
 
-use nalgebra::{Matrix4, Matrix4x1};
+use nalgebra::{Matrix4, Matrix4x1, ComplexField};
 use crate::{geometry::Shape, world};
-
 const _BLACK : [f64; 3] = [0.0,0.0,0.0];
 const _WHITE : [f64; 3] = [1.0,1.0,1.0];
 const _RED : [f64; 3] = [1.0,0.0,0.0];
@@ -128,7 +127,8 @@ pub fn rings_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
 
 pub fn checker_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
     // Rings based on X & Z
-    let c = point[0].floor() + point[1].floor() + point[2].floor();
+    let c = point[0].abs().floor() + point[1].abs().floor() + point[2].abs().floor();
+    let e: f64 = 0.00001;
     if c % 2.0 == 0.0 {
         pattern.colors[0]
     } else {

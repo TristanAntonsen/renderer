@@ -56,7 +56,7 @@ fn main() {
 
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(100, 150, 100);
-    floor.transform = translation(0.0, -1.75, -3.0);
+    floor.transform = translation(0.0, -2.0, -3.2);
     floor.material.pattern = Pattern::checker(
         color_from_rgb(100, 255, 100),
         color_from_rgb(50, 50, 50)
@@ -75,7 +75,6 @@ fn main() {
     for object in world.objects.iter() {
         println!("id: {}", object.shape_id);
     }
-
     // --------- Camera ----------
     let mut cam = Camera::default(1080, 1080, PI / 6.0);
     cam.transform = translation(0.0, 0.0, -15.0);

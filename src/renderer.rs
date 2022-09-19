@@ -155,7 +155,7 @@ pub fn shade_hit(world: &World, comps: &Comps) -> [f64; 3] {
         &comps.object.material,
         comps.object,
         &world.lights[0],
-        comps.point,
+        comps.over_point,
         comps.eyev,
         comps.normalv,
         shadowed

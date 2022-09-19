@@ -14,6 +14,7 @@ impl World {
 
     pub fn default() -> Self {
         let mut outer_sphere = Shape::default_sphere();
+        outer_sphere.material.color = [0.8,1.0,0.6];
         let mut inner_sphere = Shape::default_sphere();
         inner_sphere.set_transform(scaling(0.5, 0.5, 0.5));
         let light = PointLight::new(1.0, Matrix4x1::new(-10.0, 10.0, -10.0, 1.0));

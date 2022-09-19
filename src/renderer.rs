@@ -8,17 +8,16 @@ use crate::constants::Canvas;
 use image::imageops::colorops;
 use nalgebra::{Matrix4x1, Matrix4};
 
-pub fn render(camera: &Camera, world: &World) -> Canvas {
+pub fn render(camera: &Camera, world: &World, remaining: &u8) -> Canvas {
     let mut image = Canvas::new(camera.hsize as usize, camera.vsize as usize);
     let X_RES = camera.hsize;
     let Y_RES = camera.vsize;
 
     let (mut ray, mut color);
-
     for y in 0..Y_RES - 1 {
             for x in 0..X_RES - 1 {
             ray = ray_for_pixel(camera, x, y);
-            color = color_at(world, &ray);
+            color = color_at(world, &ray, &remaining);
             // println!("color: {:?}",&color);
             image.write_pixel(x as usize, y as usize, color);
         }
@@ -132,13 +131,13 @@ pub fn is_shadowed(world: &World, point: Matrix4x1<f64>) -> bool {
 
 }
 
-pub fn color_at(world: &World, ray: &Ray) -> [f64; 3] {
+pub fn color_at(world: &World, ray: &Ray, remaining: &u8) -> [f64; 3] {
     let world_ints = intersect_world(ray, &world);
     let color : [f64; 3];
     if let Some(h) = world_ints.hit() {
         // if there is a valid intersection, compute the color
         let comps = prepare_computations(&h, ray);
-        color = shade_hit(world, &comps)
+        color = shade_hit(world, &comps, remaining)
     } else {
         // if no valid intersection, return black
         color = [0.0,0.0,0.0];
@@ -146,12 +145,30 @@ pub fn color_at(world: &World, ray: &Ray) -> [f64; 3] {
     return color
 }
 
-pub fn shade_hit(world: &World, comps: &Comps) -> [f64; 3] {
+pub fn reflected_color(world: &World, comps: &Comps, remaining: &u8) -> [f64; 3] {
+    if remaining <= &0 {
+        return [0.0,0.0,0.0]
+    }
+    if comps.object.material.reflective == 0.0 {
+        return [0.0,0.0,0.0]
+    }
+    let reflected_ray = Ray {
+        origin: comps.over_point,
+        direction: comps.reflectv
+    };
+    let mut color = color_at(world, &reflected_ray, &(remaining - 1));
+    let refl = comps.object.material.reflective;
+    color.iter_mut().for_each(|c| *c *= refl);
+
+    color
+}
+
+pub fn shade_hit(world: &World, comps: &Comps, remaining: &u8) -> [f64; 3] {
 
     let shadowed = is_shadowed(world, comps.over_point);
     // let shadowed = false;
 
-    lighting(
+    let surface = lighting(
         &comps.object.material,
         comps.object,
         &world.lights[0],
@@ -159,8 +176,16 @@ pub fn shade_hit(world: &World, comps: &Comps) -> [f64; 3] {
         comps.eyev,
         comps.normalv,
         shadowed
-    )
+    );
+
+    let reflected = reflected_color(world, comps, remaining);
+
+    return [surface[0] + reflected[0],
+            surface[1] + reflected[1],
+            surface[2] + reflected[2]
+    ]
 }
+
 
 pub fn lighting(material: &Material, object: &Shape, light: &PointLight, point: Matrix4x1<f64>, eyev: Matrix4x1<f64>, normalv: Matrix4x1<f64>, is_shadowed: bool) -> [f64; 3] {
     

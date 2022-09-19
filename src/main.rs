@@ -25,7 +25,7 @@ use world::{view_transform, World};
 
 use crate::{
     export::_save_png,
-    renderer::{lighting, shade_hit, Camera},
+    renderer::{lighting, shade_hit, Camera, reflected_color},
 };
 extern crate image;
 
@@ -35,7 +35,7 @@ fn main() {
     // -----------------------------------
 
     // --------- World -----------
-    let mut world = World::new();
+    let mut world = World::default();
 
     // --------- Light ----------
     let mut light = PointLight::new(1.0, Matrix4x1::new(10.0, 5.0, 5.0, 1.0));
@@ -45,18 +45,24 @@ fn main() {
     // --------- Test ray ----------
     let rt2_2 = (2.0 as f64).sqrt() / 2.0;
     let test_ray = Ray {
-        origin: Matrix4x1::new(0.0, 1.0, -1.0, 1.0),
-        direction: Matrix4x1::new(0.0, -rt2_2, rt2_2, 0.0),
+        origin: Matrix4x1::new(0.0, 0.0, -3.0, 1.0),
+        direction: Matrix4x1::new(0.0,-rt2_2, rt2_2, 0.0),
     };
 
-
     let mut floor = Shape::plane();
-    floor.material.color = color_from_rgb(100, 150, 100);
+    floor.material.color = color_from_rgb(255, 255, 255);
+    floor.material.reflective = 0.5;
+    floor.material.pattern = Pattern::checker([0.0,0.0,0.0], [1.0,1.0,1.0]);
     floor.transform = translation(0.0, -1.0, 0.0);
     
     let test_int = Intersection::new((2.0 as f64).sqrt(), &floor);
+
     let test_comps = prepare_computations(&test_int, &test_ray);
-    println!("reflectv: {}",test_comps.reflectv);
+    let remaining = 0;
+    let color = shade_hit(&world, &test_comps, &remaining);
+
+    println!("color: {:?}",color);
+
     world.objects.push(floor);
     // --------- Material testing ----------
 
@@ -84,8 +90,8 @@ fn main() {
 
 
     // --------- Testing render() ----------
-
-    let image = render(&cam, &world);
+    let bounces = 4;
+    let image = render(&cam, &world, &bounces);
 
     // --------- Saving render ----------
     _save_png("test_render.png", image);

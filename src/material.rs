@@ -58,6 +58,16 @@ impl Pattern {
         }
     }
 
+    pub fn checker(a: [f64;3], b: [f64;3]) -> Self {
+        Self {
+            colors: vec![a, b],
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+            ),
+            type_id : 4
+        }
+    }
+
 }
 
 pub fn pattern_at_shape(pattern: &Pattern, object: &Shape, world_point: Matrix4x1<f64>) -> [f64; 3] {
@@ -74,7 +84,8 @@ pub fn pattern_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
         1 => gradient_at(pattern, point),
         2 => stripe_at(pattern, point),
         3 => rings_at(pattern, point),
-        _ => rings_at(pattern, point)
+        4 => checker_at(pattern, point),
+        _ => checker_at(pattern, point)
     }
 
 }
@@ -109,6 +120,16 @@ pub fn rings_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
     // Rings based on X & Z
     let d = (point[0].powf(2.0) + point[2].powf(2.0)).sqrt();
     if d.floor() % 2.0 == 0.0 {
+        pattern.colors[0]
+    } else {
+        pattern.colors[1]
+    }
+}
+
+pub fn checker_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
+    // Rings based on X & Z
+    let c = point[0].floor() + point[1].floor() + point[2].floor();
+    if c % 2.0 <= 0.0 {
         pattern.colors[0]
     } else {
         pattern.colors[1]

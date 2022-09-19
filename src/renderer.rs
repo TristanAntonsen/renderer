@@ -1,13 +1,12 @@
 use crate::ray::{Ray,reflect};
-use crate::material::Material;
+use crate::material::{Material, Pattern, stripe_at, stripe_at_object};
 use crate::light::PointLight;
 use crate::world::World;
 use crate::intersections::{Comps, intersect_world, prepare_computations, self};
-use crate::geometry::{norm_3, cross_4};
+use crate::geometry::{Shape, norm_3, cross_4};
 use crate::constants::Canvas;
 use image::imageops::colorops;
 use nalgebra::{Matrix4x1, Matrix4};
-
 
 pub fn render(camera: &Camera, world: &World) -> Canvas {
     let mut image = Canvas::new(camera.hsize as usize, camera.vsize as usize);
@@ -154,6 +153,7 @@ pub fn shade_hit(world: &World, comps: &Comps) -> [f64; 3] {
 
     lighting(
         &comps.object.material,
+        comps.object,
         &world.lights[0],
         comps.point,
         comps.eyev,
@@ -162,10 +162,15 @@ pub fn shade_hit(world: &World, comps: &Comps) -> [f64; 3] {
     )
 }
 
-pub fn lighting(material: &Material, light: &PointLight, point: Matrix4x1<f64>, eyev: Matrix4x1<f64>, normalv: Matrix4x1<f64>, is_shadowed: bool) -> [f64; 3] {
+pub fn lighting(material: &Material, object: &Shape, light: &PointLight, point: Matrix4x1<f64>, eyev: Matrix4x1<f64>, normalv: Matrix4x1<f64>, is_shadowed: bool) -> [f64; 3] {
     
     //color to turn into final color
     let mut color = material.color;
+
+    if material.pattern.colors.len() != 0 {
+        // color = stripe_at(&material.pattern, point);
+        color = stripe_at_object(&material.pattern, object, point);
+    }
 
     // combining surface color with light's intensity
     color.iter_mut().for_each(|c| *c *= light.intensity);

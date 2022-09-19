@@ -12,7 +12,8 @@ const _BLUE : [f64; 3] = [0.0,0.0,1.0];
 
 pub struct Pattern {
     pub colors: Vec<[f64; 3]>,
-    pub transform: Matrix4<f64>
+    pub transform: Matrix4<f64>,
+    pub type_id: u8
 }
 
 impl Pattern {
@@ -22,7 +23,8 @@ impl Pattern {
             colors: Vec::new(),
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-            )
+            ),
+            type_id : 1
         }
     }
 
@@ -32,17 +34,28 @@ impl Pattern {
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
+            type_id : 1
         }
     }
 }
 
-pub fn stripe_at_object(pattern: &Pattern, object: &Shape, world_point: Matrix4x1<f64>) -> [f64; 3] {
+pub fn pattern_at_object(pattern: &Pattern, object: &Shape, world_point: Matrix4x1<f64>) -> [f64; 3] {
 
     let object_point = object.transform.try_inverse().unwrap() * world_point;
     let pattern_point = pattern.transform.try_inverse().unwrap() * object_point;
-    stripe_at(pattern, pattern_point)
+    pattern_at(pattern, pattern_point)
 
 }
+
+pub fn pattern_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
+
+    match pattern.type_id {
+        1 => stripe_at(pattern, point),
+        _ => stripe_at(pattern, point)
+    }
+
+}
+
 
 pub fn stripe_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
     // Alternate only in X

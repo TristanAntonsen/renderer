@@ -55,6 +55,7 @@ fn main() {
         color_from_rgb(100, 255, 100),
         color_from_rgb(50, 50, 50)
     );
+    sphere_1.material.pattern.transform = rotation_y(PI / 4.0) * scaling(0.1, 1.0, 1.0);
     world.objects.push(sphere_1);
 
     let mut sphere2 = Shape::default_sphere();
@@ -64,6 +65,7 @@ fn main() {
         color_from_rgb(100, 255, 100),
         color_from_rgb(50, 50, 50)
     );;
+    sphere2.material.pattern.transform = rotation_y(-PI / 4.0) * scaling(0.25, 1.0, 1.0);
     world.objects.push(sphere2);
 
     let mut floor = Shape::plane();
@@ -73,7 +75,7 @@ fn main() {
         color_from_rgb(100, 255, 100),
         color_from_rgb(50, 50, 50)
     );
-
+    floor.material.pattern.transform = scaling(0.1, 1.0, 1.0);
     world.objects.push(floor);
 
     let mut wall = Shape::plane();

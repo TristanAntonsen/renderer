@@ -1,6 +1,5 @@
-use std::{vec, f64::EPSILON};
-
 use nalgebra::{Matrix4, Matrix4x1, ComplexField};
+use noise::{NoiseFn, Perlin};
 use crate::{geometry::Shape, world};
 const _BLACK : [f64; 3] = [0.0,0.0,0.0];
 const _WHITE : [f64; 3] = [1.0,1.0,1.0];
@@ -8,11 +7,10 @@ const _RED : [f64; 3] = [1.0,0.0,0.0];
 const _GREEN : [f64; 3] = [0.0,1.0,0.0];
 const _BLUE : [f64; 3] = [0.0,0.0,1.0];
 
-
 pub struct Pattern {
     pub colors: Vec<[f64; 3]>,
     pub transform: Matrix4<f64>,
-    pub type_id: u8
+    pub type_id: u8,
 }
 
 impl Pattern {
@@ -67,6 +65,16 @@ impl Pattern {
         }
     }
 
+    pub fn perlin(a: [f64;3]) -> Self {
+        Self {
+            colors: vec![a],
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+            ),
+            type_id : 5
+        }
+    }
+
 }
 
 pub fn pattern_at_shape(pattern: &Pattern, object: &Shape, world_point: Matrix4x1<f64>) -> [f64; 3] {
@@ -79,11 +87,14 @@ pub fn pattern_at_shape(pattern: &Pattern, object: &Shape, world_point: Matrix4x
 
 pub fn pattern_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
 
+    let perlin = Perlin::new(); // probably quite slow due to calling many times, update for performance later
+
     match pattern.type_id {
         1 => gradient_at(pattern, point),
         2 => stripe_at(pattern, point),
         3 => rings_at(pattern, point),
         4 => checker_at(pattern, point),
+        5 => perlin_at(pattern, &perlin, point),
         _ => checker_at(pattern, point)
     }
 
@@ -133,6 +144,18 @@ pub fn checker_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
     } else {
         pattern.colors[1]
     }
+}
+
+pub fn perlin_at(pattern: &Pattern, noise: &Perlin, point: Matrix4x1<f64>) -> [f64; 3] {
+    // Perlin noise
+    let scale = 10.0;
+    let p = noise.get([point[0] * scale, point[1] * scale, point[2] * scale]);
+    let c = pattern.colors[0];
+    [
+        c[0] * p,
+        c[1] * p,
+        c[2] * p
+    ]
 }
 
 

@@ -18,6 +18,7 @@ use intersections::{
 use light::PointLight;
 use material::{color_from_rgb, Material, Pattern};
 use nalgebra::{Matrix4, Matrix4x1, Point};
+use noise::Perlin;
 use ray::{position, Ray};
 use renderer::{color_at, ray_for_pixel, render};
 use world::{view_transform, World};
@@ -45,8 +46,8 @@ fn main() {
     let mut sphere_1 = Shape::default_sphere();
     sphere_1.material.color = color_from_rgb(255, 150, 0);
     sphere_1.transform = scaling(1.5, 1.5, 1.5);
-    sphere_1.material.pattern = Pattern::checker([0.0,0.0,0.0], [1.0,1.0,1.0]);
-    sphere_1.material.pattern.transform = scaling(0.2, 0.2, 0.2);
+    sphere_1.material.pattern =
+        Pattern::perlin(color_from_rgb(255, 255, 255));
     world.objects.push(sphere_1);
 
     let mut sphere2 = Shape::default_sphere();
@@ -57,19 +58,15 @@ fn main() {
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(100, 150, 100);
     floor.transform = translation(0.0, -2.0, -3.2);
-    floor.material.pattern = Pattern::checker(
-        color_from_rgb(100, 255, 100),
-        color_from_rgb(50, 50, 50)
-    );
+    floor.material.pattern =
+        Pattern::checker(color_from_rgb(100, 255, 100), color_from_rgb(50, 50, 50));
     world.objects.push(floor);
 
     let mut wall = Shape::plane();
     wall.material.color = color_from_rgb(100, 150, 100);
     wall.transform = translation(0.0, -1.75, -3.0) * rotation_y(PI / 8.0) * rotation_x(PI / 2.0);
-    wall.material.pattern = Pattern::checker(
-        color_from_rgb(100, 255, 100),
-        color_from_rgb(50, 50, 50)
-    );
+    wall.material.pattern =
+        Pattern::checker(color_from_rgb(100, 255, 100), color_from_rgb(50, 50, 50));
     world.objects.push(wall);
 
     for object in world.objects.iter() {

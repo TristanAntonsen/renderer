@@ -35,7 +35,7 @@ fn main() {
     // -----------------------------------
 
     // --------- World -----------
-    let mut world = World::default();
+    let mut world = World::new();
 
     // --------- Light ----------
     let mut light = PointLight::new(1.0, Matrix4x1::new(10.0, 5.0, 5.0, 1.0));
@@ -43,46 +43,51 @@ fn main() {
     world.lights.push(light);
 
     // --------- Test ray ----------
-    let rt2_2 = (2.0 as f64).sqrt() / 2.0;
-    let test_ray = Ray {
-        origin: Matrix4x1::new(0.0, 0.0, -3.0, 1.0),
-        direction: Matrix4x1::new(0.0,-rt2_2, rt2_2, 0.0),
-    };
+    // let rt2_2 = (2.0 as f64).sqrt() / 2.0;
+    // let test_ray = Ray {
+    //     origin: Matrix4x1::new(0.0, 0.0, -3.0, 1.0),
+    //     direction: Matrix4x1::new(0.0,-rt2_2, rt2_2, 0.0),
+    // };
+
+    // --------- Material testing ----------
+
+
+    // --------- Objects -----------
+    let mut sphere_1 = Shape::default_sphere();
+    sphere_1.material.color = color_from_rgb(43, 48, 58);
+    sphere_1.material.reflective = 0.2;
+    world.objects.push(sphere_1);
+
+    let mut sphere_2 = Shape::default_sphere();
+    sphere_2.material.color = color_from_rgb(146, 220, 229);
+    sphere_2.material.reflective = 0.1;
+    sphere_2.transform = translation(2.25, 0.0, 0.0);
+    world.objects.push(sphere_2);
+
+    let mut sphere_3 = Shape::default_sphere();
+    sphere_3.material.color = color_from_rgb(214, 73, 51);
+    sphere_3.transform = translation(-2.25, 0.0, 0.0);
+    // sphere_3.material.reflective = 0.35;
+    world.objects.push(sphere_3);
+
+    let mut sphere_4 = Shape::default_sphere();
+    sphere_4.material.color = color_from_rgb(255, 255, 255);
+    sphere_4.transform = scaling(0.25, 0.25, 0.25) * translation(-4.0, -3.0, 4.0);
+    // sphere_4.material.reflective = 0.35;
+    world.objects.push(sphere_4);
+
+    let mut sphere_5 = Shape::default_sphere();
+    sphere_5.material.color = color_from_rgb(214, 73, 51);
+    sphere_5.transform = scaling(0.25, 0.25, 0.25) * translation(3.0, -3.0, 7.0);
+    // sphere_5.material.reflective = 0.35;
+    world.objects.push(sphere_5);
 
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(255, 255, 255);
     floor.material.reflective = 0.5;
     floor.material.pattern = Pattern::checker([0.0,0.0,0.0], [1.0,1.0,1.0]);
     floor.transform = translation(0.0, -1.0, 0.0);
-    
-    let test_int = Intersection::new((2.0 as f64).sqrt(), &floor);
-
-    let test_comps = prepare_computations(&test_int, &test_ray);
-    let remaining = 0;
-    let color = shade_hit(&world, &test_comps, &remaining);
-
-    println!("color: {:?}",color);
-
     world.objects.push(floor);
-    // --------- Material testing ----------
-
-    let material = Material::default();
-
-    // --------- Objects -----------
-    // let mut sphere_1 = Shape::default_sphere();
-    // sphere_1.material.color = color_from_rgb(43, 48, 58);
-    // world.objects.push(sphere_1);
-
-    // let mut sphere_2 = Shape::default_sphere();
-    // sphere_2.material.color = color_from_rgb(146, 220, 229);
-    // sphere_2.transform = translation(2.25, 0.0, 0.0);
-    // world.objects.push(sphere_2);
-
-    // let mut sphere_3 = Shape::default_sphere();
-    // sphere_3.material.color = color_from_rgb(214, 73, 51);
-    // sphere_3.transform = translation(-2.25, 0.0, 0.0);
-    // world.objects.push(sphere_3);
-
 
     // --------- Camera ----------
     let mut cam = Camera::default(1080, 1080, PI / 6.0);

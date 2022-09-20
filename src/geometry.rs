@@ -32,6 +32,17 @@ impl Shape {
         }
     }
 
+    pub fn glass_sphere() -> Self {
+        Self {
+            origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0),
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+            ),
+            material: Material::glass(),
+            shape_id: 0,
+        }
+    }
+
     pub fn plane() -> Self {
         Self {
             origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0),

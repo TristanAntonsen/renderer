@@ -133,13 +133,14 @@ pub fn is_shadowed(world: &World, point: Matrix4x1<f64>) -> bool {
 
 pub fn color_at(world: &World, ray: &Ray, remaining: &u8) -> [f64; 3] {
     let world_ints = intersect_world(ray, &world);
+    let world_ints_collection = world_ints.collection.clone(); // revisit this later -- probably don't need to copy
     let color : [f64; 3];
     if let Some(h) = world_ints.hit() {
-        // if there is a valid intersection, compute the color
-        let comps = prepare_computations(&h, ray);
+        // if there is a valid intersection, compute the colOr
+        let comps = prepare_computations(&h, ray, &world_ints_collection);
         color = shade_hit(world, &comps, remaining)
     } else {
-        // if no valid intersection, return black
+        // if no valid interse  ction, return black
         color = [0.0,0.0,0.0];
     }
     return color

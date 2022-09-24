@@ -1,61 +1,55 @@
-use crate::geometry::{Shape, sphere_normal_at, normal_at};
-use crate::ray::{position, reflect};
+use crate::geometry::{normal_at, sphere_normal_at, Shape};
 use crate::ray::Ray;
+use crate::ray::{position, reflect};
 use crate::world::World;
-use nalgebra::{Matrix4x1};
-const EPSILON : f64 = 0.00001;
+use nalgebra::Matrix4x1;
+const EPSILON: f64 = 0.00001;
 
 // ------------ INTERSECTION STRUCTS -------------
 
 // intersections structure for aggregating intersections & performing methods
+
 pub struct Intersections<'a> {
-    pub collection: Vec<Intersection<'a>>
+    pub collection: Vec<Intersection<'a>>,
 }
 // intersection structure for t and object for given intersection
+#[derive(Clone)]
 pub struct Intersection<'a> {
-    pub t : f64,
-    pub object: &'a Shape // object must outlive Intersection
+    pub t: f64,
+    pub object: &'a Shape, // object must outlive Intersection
 }
 
 // ------------ INTERSECTION TRAITS -------------
-
 impl<'a> Intersections<'a> {
-
     pub fn init() -> Self {
         Self {
-            collection: Vec::new()
+            collection: Vec::new(),
         }
     }
 
     pub fn collect(ints: Vec<Intersection<'a>>) -> Self {
-        Self {
-            collection: ints
-        }
+        Self { collection: ints }
     }
 
     pub fn hit(mut self) -> Option<Intersection<'a>> {
-
         //collect t values of self into a vector
         // let mut t_vals = self.collection.iter().map(|I| I.t).collect::<Vec<f64>>();
-        
-        self.collection.sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap()); //sorting by t1
+        self.collection
+            .sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap()); //sorting by t1
 
         for i in self.collection {
             if i.t > 0.0 {
-                return Some(i)
+                return Some(i);
             }
         }
-        return None
+        return None;
     }
-
 }
 
-impl<'a> Intersection<'a> { //trait must also outlive Intersection
+impl<'a> Intersection<'a> {
+    //trait must also outlive Intersection
     pub fn new(t: f64, s: &'a Shape) -> Self {
-        Self {
-            t: t,
-            object: s
-        }
+        Self { t: t, object: s }
     }
 }
 
@@ -68,12 +62,15 @@ pub struct Comps<'a> {
     pub eyev: Matrix4x1<f64>,
     pub normalv: Matrix4x1<f64>,
     pub reflectv: Matrix4x1<f64>,
-    pub inside: bool
+    pub n1: f64,
+    pub n2: f64,
+    pub inside: bool,
 }
 
-
-pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
-    let object = int.object; 
+pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray, xs: &Vec<Intersection<'a>>) -> Comps<'a> {
+    //int = the hit
+    //currently passing in xs.collection instead of xs. May need to refactor later to do more intelligenly
+    let object = int.object;
     let point = position(ray, int.t);
     let inside;
     let mut normal = normal_at(object, point);
@@ -88,36 +85,73 @@ pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray) -> Comps<'a> {
         inside = false;
     }
 
+    // refraction portion
+    let mut containers: Vec<&Shape> = Vec::new();
+    let mut n1 = 1.0;
+    let mut n2 = 1.0;
+    let mut is_hit : bool;
+    for i in xs.iter() {
+
+        is_hit = i.t == int.t && i.object == int.object; // if intersection is the hit. Enabled by PartialEq impl for Shape
+        
+        if is_hit { // if i = the hit
+            if containers.len() == 0 {
+                n1 = 1.0;
+            } else {
+                n1 = containers[containers.len() - 1].material.refractive_index;
+            }
+        };
+        if containers.contains(&i.object) { // if containers includes i.object, remove from containers
+            containers.retain(|o| o != &i.object) // may be slow and need to update later
+        } else {
+            containers.push(&i.object)
+        };
+        if is_hit { 
+        
+            if containers.len() == 0 {
+                n2 = 1.0;
+            } else {
+                n2 = containers[containers.len() - 1].material.refractive_index;
+            } 
+        }
+        println!("{}, {}", n1, n2);
+    }
 
     Comps {
         object,
         point,
         over_point,
         eyev,
-        normalv : normal,
+        normalv: normal,
         reflectv,
-        inside
+        n1,
+        n2,
+        inside,
     }
 }
 
 // ------------ WORLD INTERSECTIONS ------------
 
 pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> {
-
     let mut intersections = Intersections::init();
 
     for object in world.objects.iter() {
         if let Some(i) = intersect(object, ray) {
-        // if let Some(i) = intersect_sphere(ray, object) {
-            intersections.collection.push(Intersection::new(i.0, &object));
-            intersections.collection.push(Intersection::new(i.1, &object));
+            // if let Some(i) = intersect_sphere(ray, object) {
+            intersections
+                .collection
+                .push(Intersection::new(i.0, &object));
+            intersections
+                .collection
+                .push(Intersection::new(i.1, &object));
         }
     }
 
-    intersections.collection.sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap()); //sorting by t1
+    intersections
+        .collection
+        .sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap()); //sorting by t1
 
     intersections
-
 }
 
 // ------------ ABASTRACT SHAPE INTERSECTION FUNCTIONS -------------
@@ -131,17 +165,14 @@ pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
     match shape.shape_id {
         0 => intersect_sphere(&ray, &shape),
         1 => intersect_plane(&ray, &shape),
-        _ => None
-
+        _ => None,
     }
 }
-
 
 // ------------ OBJECT SPECIFIC INTERSECTION FUNCTIONS -------------
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
 pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
-
     // transform ray prior to calculation
     // multiply by the inverse of sphere.transform
     let transformation = sphere.transform.try_inverse().unwrap();
@@ -173,13 +204,12 @@ pub fn intersect_plane(ray: &Ray, plane: &Shape) -> Option<(f64, f64)> {
     let new_ray = ray.transform(transformation);
 
     if ray.direction.y.abs() < EPSILON {
-        return None
+        return None;
     }
-    
-    let t = -&new_ray.origin.y / &new_ray.direction.y;
-    return Some((t, t)) // might need to rework the double t
-}
 
+    let t = -&new_ray.origin.y / &new_ray.direction.y;
+    return Some((t, t)); // might need to rework the double t
+}
 
 // ------------ DISPLAY/DEBUG -------------
 

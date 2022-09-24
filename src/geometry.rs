@@ -59,6 +59,14 @@ impl Shape {
     }
 }
 
+// comparison -- kind of hacky for now, revisit later
+impl PartialEq for Shape {
+    fn eq(&self, other: &Self) -> bool {
+        self.origin == other.origin && self.shape_id == other.shape_id
+    }
+}
+
+
 //assumes form of [x,y,z,1] (w = 1 means Point)
 pub struct _Point {
     pub pos: [f64; 4],

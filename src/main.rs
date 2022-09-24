@@ -43,51 +43,63 @@ fn main() {
     world.lights.push(light);
 
     // --------- Test ray ----------
-    // let rt2_2 = (2.0 as f64).sqrt() / 2.0;
-    // let test_ray = Ray {
-    //     origin: Matrix4x1::new(0.0, 0.0, -3.0, 1.0),
-    //     direction: Matrix4x1::new(0.0,-rt2_2, rt2_2, 0.0),
-    // };
+    let test_ray = Ray {
+        origin: Matrix4x1::new(0.0, 0.0, -4.0, 1.0),
+        direction: Matrix4x1::new(0.0, 0.0, 1.0, 0.0),
+    };
 
     // --------- Material testing ----------
 
 
     // --------- Objects -----------
-    let mut sphere_1 = Shape::default_sphere();
-    sphere_1.material.color = color_from_rgb(43, 48, 58);
-    sphere_1.material.reflective = 0.2;
-    world.objects.push(sphere_1);
+    // A
+    let mut sphere_A = Shape::glass_sphere();
+    sphere_A.transform = scaling(2.0, 2.0, 2.0);
+    sphere_A.material.refractive_index = 1.5;
+    // world.objects.push(sphere_A);
+    println!("A transform: {}", sphere_A.transform);
+    println!("A index: {}", sphere_A.material.refractive_index);
+    
+    // B
+    let mut sphere_B = Shape::glass_sphere();
+    sphere_B.transform = translation(0.0, 0.0, -0.25);
+    sphere_B.material.refractive_index = 2.0;
+    // world.objects.push(sphere_B);
+    println!("B transform: {}", sphere_B.transform);
+    println!("B index: {}", sphere_B.material.refractive_index);
 
-    let mut sphere_2 = Shape::default_sphere();
-    sphere_2.material.color = color_from_rgb(146, 220, 229);
-    sphere_2.material.reflective = 0.1;
-    sphere_2.transform = translation(2.25, 0.0, 0.0);
-    world.objects.push(sphere_2);
+    // C
+    let mut sphere_C = Shape::glass_sphere();
+    sphere_C.transform = translation(0.0, 0.0, 0.25);
+    sphere_C.material.refractive_index = 2.5;
+    // world.objects.push(sphere_C);
+    println!("C transform: {}", sphere_C.transform);
+    println!("C index: {}", sphere_C.material.refractive_index);
 
-    let mut sphere_3 = Shape::default_sphere();
-    sphere_3.material.color = color_from_rgb(214, 73, 51);
-    sphere_3.transform = translation(-2.25, 0.0, 0.0);
-    // sphere_3.material.reflective = 0.35;
-    world.objects.push(sphere_3);
 
-    let mut sphere_4 = Shape::default_sphere();
-    sphere_4.material.color = color_from_rgb(255, 255, 255);
-    sphere_4.transform = scaling(0.25, 0.25, 0.25) * translation(-4.0, -3.0, 4.0);
-    // sphere_4.material.reflective = 0.35;
-    world.objects.push(sphere_4);
+    let i0 = Intersection::new(2.0, &sphere_A);
+    let i1 = Intersection::new(2.75, &sphere_B);
+    let i2 = Intersection::new(3.25, &sphere_C);
+    let i3 = Intersection::new(4.75, &sphere_B);
+    let i4 = Intersection::new(5.25, &sphere_C);
+    let i5 = Intersection::new(6.0, &sphere_A);
+    let intersections = Intersections::collect(vec![i0, i1, i2, i3, i4, i5]);
+    let mut comps;
+    println!("index: | n1  | n2  |");
+    for index in 0..6{
+        comps = prepare_computations(&intersections.collection[index], &test_ray, &intersections.collection);
+        // println!("{}:     | {:?} | {:?} | point z: {:?}",index, comps.n1, comps.n2, comps.point[2]);
+        println!("");
+    }
+    
 
-    let mut sphere_5 = Shape::default_sphere();
-    sphere_5.material.color = color_from_rgb(214, 73, 51);
-    sphere_5.transform = scaling(0.25, 0.25, 0.25) * translation(3.0, -3.0, 7.0);
-    // sphere_5.material.reflective = 0.35;
-    world.objects.push(sphere_5);
+    // let mut floor = Shape::plane();
+    // floor.material.color = color_from_rg¸b(255, 255, 255);
+    // floor.material.reflective = 0.5;
+    // floor.material.pattern = Pattern::checker([0.0,0.0,0.0], [1.0,1.0,1.0]);
+    // floor.transform = translation(0.0, -1.0, 0.0);
+    // world.objects.push(floor);
 
-    let mut floor = Shape::plane();
-    floor.material.color = color_from_rgb(255, 255, 255);
-    floor.material.reflective = 0.5;
-    floor.material.pattern = Pattern::checker([0.0,0.0,0.0], [1.0,1.0,1.0]);
-    floor.transform = translation(0.0, -1.0, 0.0);
-    world.objects.push(floor);
 
     // --------- Camera ----------
     let mut cam = Camera::default(1080, 1080, PI / 6.0);
@@ -96,8 +108,9 @@ fn main() {
 
     // --------- Testing render() ----------
     let bounces = 4;
-    let image = render(&cam, &world, &bounces);
+    // let image = render(&cam, &world, &bounces);
 
     // --------- Saving render ----------
-    _save_png("test_render.png", image);
+    // _save_png("test_render.png", image);
+
 }

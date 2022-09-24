@@ -1,11 +1,11 @@
-use nalgebra::{Matrix4, Matrix4x1, ComplexField};
-use noise::{NoiseFn, Perlin};
 use crate::{geometry::Shape, world};
-const _BLACK : [f64; 3] = [0.0,0.0,0.0];
-const _WHITE : [f64; 3] = [1.0,1.0,1.0];
-const _RED : [f64; 3] = [1.0,0.0,0.0];
-const _GREEN : [f64; 3] = [0.0,1.0,0.0];
-const _BLUE : [f64; 3] = [0.0,0.0,1.0];
+use nalgebra::{ComplexField, Matrix4, Matrix4x1};
+use noise::{NoiseFn, Perlin};
+const _BLACK: [f64; 3] = [0.0, 0.0, 0.0];
+const _WHITE: [f64; 3] = [1.0, 1.0, 1.0];
+const _RED: [f64; 3] = [1.0, 0.0, 0.0];
+const _GREEN: [f64; 3] = [0.0, 1.0, 0.0];
+const _BLUE: [f64; 3] = [0.0, 0.0, 1.0];
 
 pub struct Pattern {
     pub colors: Vec<[f64; 3]>,
@@ -14,79 +14,78 @@ pub struct Pattern {
 }
 
 impl Pattern {
-
     pub fn empty() -> Self {
         Self {
             colors: Vec::new(),
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 0
+            type_id: 0,
         }
     }
 
-    pub fn gradient(a: [f64;3], b: [f64;3]) -> Self {
+    pub fn gradient(a: [f64; 3], b: [f64; 3]) -> Self {
         Self {
             colors: vec![a, b],
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 1
+            type_id: 1,
         }
     }
 
-    pub fn stripe(a: [f64;3], b: [f64;3]) -> Self {
+    pub fn stripe(a: [f64; 3], b: [f64; 3]) -> Self {
         Self {
             colors: vec![a, b],
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 2
+            type_id: 2,
         }
     }
 
-    pub fn rings(a: [f64;3], b: [f64;3]) -> Self {
+    pub fn rings(a: [f64; 3], b: [f64; 3]) -> Self {
         Self {
             colors: vec![a, b],
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 3
+            type_id: 3,
         }
     }
 
-    pub fn checker(a: [f64;3], b: [f64;3]) -> Self {
+    pub fn checker(a: [f64; 3], b: [f64; 3]) -> Self {
         Self {
             colors: vec![a, b],
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 4
+            type_id: 4,
         }
     }
 
-    pub fn perlin(a: [f64;3]) -> Self {
+    pub fn perlin(a: [f64; 3]) -> Self {
         Self {
             colors: vec![a],
             transform: Matrix4::new(
                 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
             ),
-            type_id : 5
+            type_id: 5,
         }
     }
-
 }
 
-pub fn pattern_at_shape(pattern: &Pattern, object: &Shape, world_point: Matrix4x1<f64>) -> [f64; 3] {
-
+pub fn pattern_at_shape(
+    pattern: &Pattern,
+    object: &Shape,
+    world_point: Matrix4x1<f64>,
+) -> [f64; 3] {
     let object_point = object.transform.try_inverse().unwrap() * world_point;
     let pattern_point = pattern.transform.try_inverse().unwrap() * object_point;
     pattern_at(pattern, pattern_point)
-
 }
 
 pub fn pattern_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
-
     let perlin = Perlin::new(); // probably quite slow due to calling many times, update for performance later
 
     match pattern.type_id {
@@ -95,25 +94,22 @@ pub fn pattern_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
         3 => rings_at(pattern, point),
         4 => checker_at(pattern, point),
         5 => perlin_at(pattern, &perlin, point),
-        _ => checker_at(pattern, point)
+        _ => checker_at(pattern, point),
     }
-
 }
-
 
 pub fn gradient_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
     // Gradient in X direction
     let fraction = point.x - point.x.floor();
-    let gradient = [ // do this in a more intelligent way
+    let gradient = [
+        // do this in a more intelligent way
         // color a + distance * fraction
         pattern.colors[0][0] + (pattern.colors[1][0] - pattern.colors[0][0]) * fraction,
         pattern.colors[0][1] + (pattern.colors[1][1] - pattern.colors[0][1]) * fraction,
         pattern.colors[0][2] + (pattern.colors[1][2] - pattern.colors[0][2]) * fraction,
-        ];
-
+    ];
 
     gradient
-
 }
 
 pub fn stripe_at(pattern: &Pattern, point: Matrix4x1<f64>) -> [f64; 3] {
@@ -151,14 +147,8 @@ pub fn perlin_at(pattern: &Pattern, noise: &Perlin, point: Matrix4x1<f64>) -> [f
     let scale = 10.0;
     let p = noise.get([point[0] * scale, point[1] * scale, point[2] * scale]);
     let c = pattern.colors[0];
-    [
-        c[0] * p,
-        c[1] * p,
-        c[2] * p
-    ]
+    [c[0] * p, c[1] * p, c[2] * p]
 }
-
-
 
 pub struct Material {
     pub color: [f64; 3],
@@ -167,11 +157,23 @@ pub struct Material {
     pub specular: f64,
     pub shininess: f64,
     pub reflective: f64,
-    pub pattern: Pattern
+    pub transparency: f64,
+    pub refractive_index: f64,
+    pub pattern: Pattern,
 }
 
 impl Material {
-    pub fn new(color: [f64; 3], ambient: f64, diffuse: f64, specular: f64, shininess: f64, pattern: Pattern, reflective: f64) -> Self {
+    pub fn new(
+        color: [f64; 3],
+        ambient: f64,
+        diffuse: f64,
+        specular: f64,
+        shininess: f64,
+        pattern: Pattern,
+        reflective: f64,
+        transparency: f64,
+        refractive_index: f64,
+    ) -> Self {
         Self {
             color,
             ambient,
@@ -179,7 +181,9 @@ impl Material {
             specular,
             shininess,
             reflective,
-            pattern
+            transparency,
+            refractive_index,
+            pattern,
         }
     }
 
@@ -191,17 +195,27 @@ impl Material {
             specular: 0.9,
             shininess: 200.0,
             reflective: 0.0,
-            pattern: Pattern::empty()
+            transparency: 0.0,
+            refractive_index: 1.0,
+            pattern: Pattern::empty(),
+        }
+    }
+
+    pub fn glass() -> Self {
+        Self {
+            color: [1.0, 1.0, 1.0],
+            ambient: 0.1,
+            diffuse: 0.9,
+            specular: 0.9,
+            shininess: 200.0,
+            reflective: 0.0,
+            transparency: 1.0,
+            refractive_index: 1.52,
+            pattern: Pattern::empty(),
         }
     }
 }
 
 pub fn color_from_rgb(r: u32, g: u32, b: u32) -> [f64; 3] {
-
-    [
-        r as f64 / 255.0,
-        g as f64 / 255.0,
-        b as f64 / 255.0,
-    ]
-
+    [r as f64 / 255.0, g as f64 / 255.0, b as f64 / 255.0]
 }

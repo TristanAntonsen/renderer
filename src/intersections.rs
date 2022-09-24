@@ -114,7 +114,7 @@ pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray, xs: &Vec<Inter
                 n2 = containers[containers.len() - 1].material.refractive_index;
             } 
         }
-        println!("{}, {}", n1, n2);
+        // println!("{}, {}", n1, n2);
     }
 
     Comps {

@@ -1,5 +1,5 @@
 use crate::material::Material;
-use nalgebra::{Matrix3x1, Matrix4, Matrix4x1};
+use nalgebra::{Matrix3x1, Matrix4, Matrix4x1, ComplexField};
 
 // struct for Sphere object used for calculating intersections
 pub struct Shape {
@@ -20,6 +20,7 @@ impl Shape {
             shape_id: 0,
         }
     }
+
 
     pub fn default_sphere() -> Self {
         Self {
@@ -131,6 +132,30 @@ pub fn plane_normal_at(plane: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<
     world_normal[3] = 0.0;
 
     return world_normal.normalize();
+}
+
+pub fn cube_normal_at(plane: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
+
+    //returns component with the largest absolute value (normal is always orthogonal)
+
+    let x = world_point.x.abs();
+    let y = world_point.y.abs();
+    let z = world_point.z.abs();
+
+    let mut max_tmp = [x,y,z];
+
+    float_ord::sort(&mut max_tmp);
+
+    let maxc = max_tmp[0];
+
+    match maxc {
+
+        x => Matrix4x1::new(world_point.x, 0.0, 0.0, 1.0),
+        y => Matrix4x1::new(0.0, world_point.y, 0.0, 1.0),
+        _ => Matrix4x1::new(0.0, 0.0, world_point.z, 1.0),
+
+    }
+
 }
 
 // ---------- Transformations ----------

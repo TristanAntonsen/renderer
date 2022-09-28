@@ -180,9 +180,20 @@ pub fn intersect_cube(ray: &Ray, cube: &Shape) -> Option<(f64, f64)> {
         let (tmin_y, tmax_y) = check_axis(ray.origin.y, ray.direction.y).unwrap();
         let (tmin_z, tmax_z) = check_axis(ray.origin.z, ray.direction.z).unwrap();
         
-        tmin = f64::min(f64::min(tmin_x, tmin_y), tmin_z); //lazy, fix this later
-        tmax = f64::max(f64::max(tmax_x, tmax_y), tmax_z);
+        // tmin = f64::min(f64::min(tmin_x, tmin_y), tmin_z); //lazy, fix this later
+        let mut min_tmp = [tmin_x, tmin_y, tmin_z];
+        let mut max_tmp = [tmax_x, tmax_y, tmax_z];
+        float_ord::sort(&mut min_tmp);
+        float_ord::sort(&mut max_tmp);
+
+        tmin = min_tmp[0];
+        tmax = max_tmp[0];
+
     } else {
+        return None
+    }
+
+    if tmin > tmax {
         return None
     }
 

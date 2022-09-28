@@ -171,6 +171,25 @@ pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
 
 // ------------ OBJECT SPECIFIC INTERSECTION FUNCTIONS -------------
 
+pub fn intersect_cube(ray: &Ray, cube: &Shape) -> Option<(f64, f64)> {
+    
+    let (tmin, tmax);
+    if let Some(txs) = check_axis(ray.origin.x, ray.direction.x) {
+        
+        let (tmin_x, tmax_x) = txs;
+        let (tmin_y, tmax_y) = check_axis(ray.origin.y, ray.direction.y).unwrap();
+        let (tmin_z, tmax_z) = check_axis(ray.origin.z, ray.direction.z).unwrap();
+        
+        tmin = f64::min(f64::min(tmin_x, tmin_y), tmin_z); //lazy, fix this later
+        tmax = f64::max(f64::max(tmax_x, tmax_y), tmax_z);
+    } else {
+        return None
+    }
+
+    Some((tmin, tmax))
+
+}
+
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
 pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
     // transform ray prior to calculation
@@ -198,6 +217,29 @@ pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
     Some((t1, t2))
 }
 
+pub fn check_axis(origin: f64, direction: f64) -> Option<(f64, f64)> { //1 dimensional calculation
+    
+    let tmin_numerator = -1.0 - &origin;
+    let tmax_numerator = 1.0 - &origin;
+
+    let (tmin, tmax);
+
+    if direction.abs() >= EPSILON {
+        tmin = tmin_numerator / direction;
+        tmax = tmax_numerator / direction;
+    } else {
+        tmin = f64::INFINITY;
+        tmax = f64::INFINITY;
+    }
+
+    if tmin > tmax {
+        return Some((tmax, tmin))
+    } else {
+        return Some((tmin, tmax))
+    }
+
+}
+
 pub fn intersect_plane(ray: &Ray, plane: &Shape) -> Option<(f64, f64)> {
     // if ray is parallel to XY plane
     let transformation = plane.transform.try_inverse().unwrap();
@@ -214,7 +256,19 @@ pub fn intersect_plane(ray: &Ray, plane: &Shape) -> Option<(f64, f64)> {
 // ------------ DISPLAY/DEBUG -------------
 
 // impl<'a> fmt::Debug for Intersection<'a> {
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         write!(f, "t: {}, object: {:?}", self.t, self.object)
+    //     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        //         write!(f, "t: {}, object: {:?}", self.t, self.object)
+        //     }
+        // }
+        
+        
+// ------------ TESTS -------------
+
+// #[cfg(test)]
+// mod tests {
+//     #[test]
+//     fn cube_intersection() {
+//         let cube = Shape::cube()
+//         assert_eq!(result, 4);
 //     }
 // }

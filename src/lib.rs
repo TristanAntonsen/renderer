@@ -36,4 +36,28 @@ mod tests {
         }
         // assert_eq!(i1.object.origin, sphere.origin);
     }
+
+    // #[test]
+    // fn test_cube_intersection() {
+    //     let ray = Ray {
+    //         origin: Matrix4x1::new(5.0, 0.5, 5.0, 1.0),
+    //         direction: Matrix4x1::new(-1.0, 0.0, 0.0, 0.0),
+    //     };
+
+    //     let world = World::default();
+    //     let cube = &world.objects[0];
+
+    //     let (t1, t2);
+
+    //     if let Some(t) = intersect_sphere(&ray, &cube) {
+    //         t1 = t.0;
+    //         t2 = t.1;
+    //         assert_eq!(t1, 4.0);
+    //         assert_eq!(t2, 6.0);
+    //     } else {
+    //         panic!("No intersection.")
+    //     }
+    // }
+
+
 }

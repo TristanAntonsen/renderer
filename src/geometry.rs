@@ -21,7 +21,6 @@ impl Shape {
         }
     }
 
-
     pub fn default_sphere() -> Self {
         Self {
             origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0),
@@ -52,6 +51,17 @@ impl Shape {
             ),
             material: Material::default(),
             shape_id: 1,
+        }
+    }
+
+    pub fn default_cube() -> Self {
+        Self {
+            origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0),
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+            ),
+            material: Material::default(),
+            shape_id: 2,
         }
     }
 
@@ -100,6 +110,7 @@ pub fn normal_at(shape: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
     match shape.shape_id {
         0 => sphere_normal_at(shape, world_point), //add other cases later
         1 => plane_normal_at(shape, world_point),  //add other cases later
+        2 => cube_normal_at(shape, world_point),  //add other cases later
         _ => plane_normal_at(shape, world_point),  //add other cases later
     }
 }
@@ -149,11 +160,9 @@ pub fn cube_normal_at(plane: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f
     let maxc = max_tmp[0];
 
     match maxc {
-
-        x => Matrix4x1::new(world_point.x, 0.0, 0.0, 1.0),
-        y => Matrix4x1::new(0.0, world_point.y, 0.0, 1.0),
-        _ => Matrix4x1::new(0.0, 0.0, world_point.z, 1.0),
-
+        x => Matrix4x1::new(world_point.x, 0.0, 0.0, 1.0).normalize(),
+        y => Matrix4x1::new(0.0, world_point.y, 0.0, 1.0).normalize(),
+        _ => Matrix4x1::new(0.0, 0.0, world_point.z, 1.0).normalize(),
     }
 
 }

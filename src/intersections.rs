@@ -165,6 +165,7 @@ pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
     match shape.shape_id {
         0 => intersect_sphere(&ray, &shape),
         1 => intersect_plane(&ray, &shape),
+        2 => intersect_cube(&ray, &shape),
         _ => None,
     }
 }
@@ -174,15 +175,16 @@ pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
 pub fn intersect_cube(ray: &Ray, cube: &Shape) -> Option<(f64, f64)> {
     
     let (tmin, tmax);
+
     if let Some(txs) = check_axis(ray.origin.x, ray.direction.x) {
         
         let (tmin_x, tmax_x) = txs;
         let (tmin_y, tmax_y) = check_axis(ray.origin.y, ray.direction.y).unwrap();
         let (tmin_z, tmax_z) = check_axis(ray.origin.z, ray.direction.z).unwrap();
         
-        // tmin = f64::min(f64::min(tmin_x, tmin_y), tmin_z); //lazy, fix this later
         let mut min_tmp = [tmin_x, tmin_y, tmin_z];
         let mut max_tmp = [tmax_x, tmax_y, tmax_z];
+
         float_ord::sort(&mut min_tmp);
         float_ord::sort(&mut max_tmp);
 
@@ -230,12 +232,12 @@ pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
 
 pub fn check_axis(origin: f64, direction: f64) -> Option<(f64, f64)> { //1 dimensional calculation
     
-    let tmin_numerator = -1.0 - &origin;
-    let tmax_numerator = 1.0 - &origin;
+    let tmin_numerator = -1.0 - origin;
+    let tmax_numerator = 1.0 - origin;
 
     let (tmin, tmax);
 
-    if direction.abs() >= EPSILON {
+    if direction.abs() >= 0.0001 {
         tmin = tmin_numerator / direction;
         tmax = tmax_numerator / direction;
     } else {
@@ -272,14 +274,3 @@ pub fn intersect_plane(ray: &Ray, plane: &Shape) -> Option<(f64, f64)> {
         //     }
         // }
         
-        
-// ------------ TESTS -------------
-
-// #[cfg(test)]
-// mod tests {
-//     #[test]
-//     fn cube_intersection() {
-//         let cube = Shape::cube()
-//         assert_eq!(result, 4);
-//     }
-// }

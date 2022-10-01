@@ -44,35 +44,50 @@ fn main() {
 
     // --------- Test ray ----------
     let test_ray = Ray {
-        origin: Matrix4x1::new(0.0, 0.0, -4.0, 1.0),
-        direction: Matrix4x1::new(0.0, 0.0, 1.0, 0.0),
+        origin: Matrix4x1::new(-1.0, 0.5, 0.0, 1.0),
+        direction: Matrix4x1::new(-1.0, 0.0, 0.0, 0.0),
     };
 
+    let (t1, t2);
+    let cube = Shape::default_cube();
+
+    if let Some(t) = intersect_sphere(&test_ray, &cube) {
+        t1 = t.0;
+        t2 = t.1;
+        println!("t1: {},t2: {}",t1, t2);
+    } else {
+        println!("no intersection");
+    }
     // --------- Material testing ----------
 
 
     // --------- Objects -----------
-    let mut sphere_1 = Shape::default_sphere();
-    sphere_1.material.color = color_from_rgb(43, 48, 58);
-    sphere_1.transform = translation(0.0, 0.25, 0.0);
-    sphere_1.material.reflective = 0.5;
-    world.objects.push(sphere_1);
+    // let mut sphere_1 = Shape::default_sphere();
+    // sphere_1.material.color = color_from_rgb(43, 48, 58);
+    // sphere_1.transform = translation(0.0, 0.25, 0.0);
+    // sphere_1.material.reflective = 0.35;
+    // world.objects.push(sphere_1);
 
-    let mut sphere_2 = Shape::default_sphere();
-    sphere_2.material.color = color_from_rgb(146, 220, 229);
-    sphere_2.material.reflective = 0.25;
-    sphere_2.transform = translation(2.25, 0.25, 0.0);
-    world.objects.push(sphere_2);
+    // let mut sphere_2 = Shape::default_sphere();
+    // sphere_2.material.color = color_from_rgb(146, 220, 229);
+    // sphere_2.material.reflective = 0.25;
+    // sphere_2.transform = translation(2.25, 0.25, 0.0);
+    // world.objects.push(sphere_2);
 
-    let mut sphere_3 = Shape::default_sphere();
-    sphere_3.material.color = color_from_rgb(214, 73, 51);
-    sphere_3.material.reflective = 0.25;
-    sphere_3.transform = translation(-2.25, 0.25, 0.0);
-    world.objects.push(sphere_3);
+    // let mut sphere_3 = Shape::default_sphere();
+    // sphere_3.material.color = color_from_rgb(214, 73, 51);
+    // sphere_3.material.reflective = 0.25;
+    // sphere_3.transform = translation(-2.25, 0.25, 0.0);
+    // world.objects.push(sphere_3);
+
+    // let mut cube = Shape::default_cube();
+    // cube.transform = translation(0.0, 0.0, -1.0);
+    // world.objects.push(cube);
+
 
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(255, 255, 255);
-    floor.material.reflective = 0.5;
+    // floor.material.reflective = 0.5;
     floor.material.pattern = Pattern::checker([0.0,0.0,0.0], [1.0,1.0,1.0]);
     floor.transform = translation(0.0, -0.75, 0.0);
     world.objects.push(floor);

@@ -175,25 +175,32 @@ pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
 pub fn intersect_cube(ray: &Ray, cube: &Shape) -> Option<(f64, f64)> {
     
     let (tmin, tmax);
+    let (tmin_x, tmax_x, tmin_y, tmax_y, tmin_z, tmax_z);
 
     if let Some(txs) = check_axis(ray.origin.x, ray.direction.x) {
-        
-        let (tmin_x, tmax_x) = txs;
-        let (tmin_y, tmax_y) = check_axis(ray.origin.y, ray.direction.y).unwrap();
-        let (tmin_z, tmax_z) = check_axis(ray.origin.z, ray.direction.z).unwrap();
-        
-        let mut min_tmp = [tmin_x, tmin_y, tmin_z];
-        let mut max_tmp = [tmax_x, tmax_y, tmax_z];
-
-        float_ord::sort(&mut min_tmp);
-        float_ord::sort(&mut max_tmp);
-
-        tmin = min_tmp[0];
-        tmax = max_tmp[0];
-
+        (tmin_x, tmax_x) = txs;
     } else {
         return None
     }
+    if let Some(tys) = check_axis(ray.origin.y, ray.direction.y) {
+        (tmin_y, tmax_y) = tys;
+    } else {
+        return None
+    }
+    if let Some(tzs) = check_axis(ray.origin.z, ray.direction.z) {
+        (tmin_z, tmax_z) = tzs;
+    } else {
+        return None
+    }
+
+    let mut min_tmp = [tmin_x, tmin_y, tmin_z];
+    let mut max_tmp = [tmax_x, tmax_y, tmax_z];
+
+    float_ord::sort(&mut min_tmp);
+    float_ord::sort(&mut max_tmp);
+
+    tmin = min_tmp[min_tmp.len() - 1]; //max of mins
+    tmax = max_tmp[0]; //min of maxes
 
     if tmin > tmax {
         return None
@@ -241,8 +248,9 @@ pub fn check_axis(origin: f64, direction: f64) -> Option<(f64, f64)> { //1 dimen
         tmin = tmin_numerator / direction;
         tmax = tmax_numerator / direction;
     } else {
-        tmin = f64::INFINITY;
-        tmax = f64::INFINITY;
+        tmin = tmin_numerator * f64::INFINITY;
+        tmax = tmax_numerator * f64::INFINITY;
+        // return None;
     }
 
     if tmin > tmax {

@@ -11,9 +11,9 @@ mod world;
 use std::f64::consts::PI;
 
 use constants::Canvas;
-use geometry::{rotation_x, rotation_y, rotation_z, scaling, sphere_normal_at, translation, Shape};
+use geometry::{rotation_x, rotation_y, rotation_z, scaling, cube_normal_at, translation, Shape};
 use intersections::{
-    intersect_sphere, intersect_world, prepare_computations, Comps, Intersection, Intersections,
+    intersect_sphere, intersect_cube, intersect_world, prepare_computations, Comps, Intersection, Intersections,
 };
 use light::PointLight;
 use material::{color_from_rgb, Material, Pattern};
@@ -44,21 +44,22 @@ fn main() {
 
     // --------- Test ray ----------
     let test_ray = Ray {
-        origin: Matrix4x1::new(-1.0, 0.5, 0.0, 1.0),
-        direction: Matrix4x1::new(-1.0, 0.0, 0.0, 0.0),
+        origin: Matrix4x1::new(2.0, 2.0, 0.0, 1.0),
+        direction: Matrix4x1::new(-1.0, -0.0, 0.0, 0.0),
     };
 
-    let (t1, t2);
-    let cube = Shape::default_cube();
+    // --------- Cube normal testing ----------
+    
+    let test_cube = Shape::default_cube();
+    let test_pt = Matrix4x1::new(
+        -0.6,
+        0.3,
+        1.0,
+        1.0
+    );
 
-    if let Some(t) = intersect_sphere(&test_ray, &cube) {
-        t1 = t.0;
-        t2 = t.1;
-        println!("t1: {},t2: {}",t1, t2);
-    } else {
-        println!("no intersection");
-    }
-    // --------- Material testing ----------
+    let n = cube_normal_at(&test_cube, test_pt);
+    println!("normal: {}",n);
 
 
     // --------- Objects -----------
@@ -80,9 +81,11 @@ fn main() {
     // sphere_3.transform = translation(-2.25, 0.25, 0.0);
     // world.objects.push(sphere_3);
 
-    // let mut cube = Shape::default_cube();
+    let mut cube = Shape::default_cube();
     // cube.transform = translation(0.0, 0.0, -1.0);
-    // world.objects.push(cube);
+    // cube.transform = scaling(0.5, 0.5, 0.5);
+    cube.transform = rotation_y(PI / 4.0);
+    world.objects.push(cube);
 
 
     let mut floor = Shape::plane();
@@ -90,7 +93,7 @@ fn main() {
     // floor.material.reflective = 0.5;
     floor.material.pattern = Pattern::checker([0.0,0.0,0.0], [1.0,1.0,1.0]);
     floor.transform = translation(0.0, -0.75, 0.0);
-    world.objects.push(floor);
+    // world.objects.push(floor);
 
 
     // --------- Camera ----------

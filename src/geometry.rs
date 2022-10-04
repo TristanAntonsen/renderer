@@ -1,5 +1,5 @@
 use crate::material::Material;
-use nalgebra::{Matrix3x1, Matrix4, Matrix4x1, ComplexField};
+use nalgebra::{ComplexField, Matrix3x1, Matrix4, Matrix4x1};
 
 // struct for Sphere object used for calculating intersections
 pub struct Shape {
@@ -77,7 +77,6 @@ impl PartialEq for Shape {
     }
 }
 
-
 //assumes form of [x,y,z,1] (w = 1 means Point)
 pub struct _Point {
     pub pos: [f64; 4],
@@ -110,14 +109,13 @@ pub fn normal_at(shape: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
     match shape.shape_id {
         0 => sphere_normal_at(shape, world_point), //add other cases later
         1 => plane_normal_at(shape, world_point),  //add other cases later
-        2 => cube_normal_at(shape, world_point),  //add other cases later
+        2 => cube_normal_at(shape, world_point),   //add other cases later
         _ => plane_normal_at(shape, world_point),  //add other cases later
     }
 }
 
 // ---------- Local normal functions ----------
 
-// consolodate & move these into abstract function later
 pub fn sphere_normal_at(sphere: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
     // inverse of sphere transformation * the point in world space
     let object_point = sphere.transform.try_inverse().unwrap() * world_point;
@@ -145,26 +143,31 @@ pub fn plane_normal_at(plane: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<
     return world_normal.normalize();
 }
 
-pub fn cube_normal_at(plane: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
+pub fn cube_normal_at(cube: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
+    // inverse of cube transformation * the point in world space
+    let object_point = cube.transform.try_inverse().unwrap() * world_point;
 
-    //returns component with the largest absolute value (normal is always orthogonal)
+    let mut pt_tmp = [
+        object_point.x.abs(),
+        object_point.y.abs(),
+        object_point.z.abs(),
+    ];
 
-    let x = world_point.x.abs();
-    let y = world_point.y.abs();
-    let z = world_point.z.abs();
+    float_ord::sort(&mut pt_tmp);
 
-    let mut max_tmp = [x,y,z];
+    let maxc = pt_tmp[pt_tmp.len() - 1];
 
-    float_ord::sort(&mut max_tmp);
 
-    let maxc = max_tmp[0];
-
-    match maxc {
-        x => Matrix4x1::new(world_point.x, 0.0, 0.0, 1.0).normalize(),
-        y => Matrix4x1::new(0.0, world_point.y, 0.0, 1.0).normalize(),
-        _ => Matrix4x1::new(0.0, 0.0, world_point.z, 1.0).normalize(),
+    if maxc == object_point.x.abs() {
+        return cube.transform.try_inverse().unwrap().transpose()
+            * Matrix4x1::new(object_point.x, 0.0, 0.0, 0.0).normalize();
+    } else if maxc == object_point.y.abs() {
+        return cube.transform.try_inverse().unwrap().transpose()
+            * Matrix4x1::new(0.0, object_point.y, 0.0, 0.0).normalize();
+    } else {
+        return cube.transform.try_inverse().unwrap().transpose()
+            * Matrix4x1::new(0.0, 0.0, object_point.z, 0.0).normalize();
     }
-
 }
 
 // ---------- Transformations ----------

@@ -177,21 +177,12 @@ pub fn intersect_cube(ray: &Ray, cube: &Shape) -> Option<(f64, f64)> {
     let (tmin, tmax);
     let (tmin_x, tmax_x, tmin_y, tmax_y, tmin_z, tmax_z);
 
-    if let Some(txs) = check_axis(ray.origin.x, ray.direction.x) {
-        (tmin_x, tmax_x) = txs;
-    } else {
-        return None
-    }
-    if let Some(tys) = check_axis(ray.origin.y, ray.direction.y) {
-        (tmin_y, tmax_y) = tys;
-    } else {
-        return None
-    }
-    if let Some(tzs) = check_axis(ray.origin.z, ray.direction.z) {
-        (tmin_z, tmax_z) = tzs;
-    } else {
-        return None
-    }
+    let transformation = cube.transform.try_inverse().unwrap();
+    let new_ray = ray.transform(transformation);
+
+    if let Some(txs) = check_axis(new_ray.origin.x, new_ray.direction.x) { (tmin_x, tmax_x) = txs; } else { return None }
+    if let Some(tys) = check_axis(new_ray.origin.y, new_ray.direction.y) { (tmin_y, tmax_y) = tys; } else { return None }
+    if let Some(tzs) = check_axis(new_ray.origin.z, new_ray.direction.z) { (tmin_z, tmax_z) = tzs; } else { return None }
 
     let mut min_tmp = [tmin_x, tmin_y, tmin_z];
     let mut max_tmp = [tmax_x, tmax_y, tmax_z];
@@ -244,7 +235,7 @@ pub fn check_axis(origin: f64, direction: f64) -> Option<(f64, f64)> { //1 dimen
 
     let (tmin, tmax);
 
-    if direction.abs() >= 0.0001 {
+    if direction.abs() >= EPSILON {
         tmin = tmin_numerator / direction;
         tmax = tmax_numerator / direction;
     } else {

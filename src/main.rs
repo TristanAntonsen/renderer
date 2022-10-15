@@ -45,16 +45,21 @@ fn main() {
     // --------- Test ray ----------
     let test_ray = Ray {
         origin: Matrix4x1::new(2.0, 2.0, 0.0, 1.0),
-        direction: Matrix4x1::new(-1.0, -0.0, 0.0, 0.0),
+        direction: Matrix4x1::new(-1.0, 0.0, 0.0, 0.0),
     };
 
-    // --------- Cube normal testing ----------
+    // --------- Cube intersection testing ----------
     
     let test_cube = Shape::default_cube();
+    let t = intersect_cube(&test_ray, &test_cube);
+
+    println!("intersection: {:?}", t);
+    // --------- Cube normal testing ----------
+    
     let test_pt = Matrix4x1::new(
-        -0.6,
-        0.3,
         1.0,
+        1.0,
+        0.5,
         1.0
     );
 
@@ -84,9 +89,8 @@ fn main() {
     let mut cube = Shape::default_cube();
     // cube.transform = translation(0.0, 0.0, -1.0);
     // cube.transform = scaling(0.5, 0.5, 0.5);
-    cube.transform = rotation_y(PI / 4.0);
+    cube.transform = rotation_y(PI / 3.0) * rotation_x(PI / 3.0) * translation(0.0, -1.0, 0.0);
     world.objects.push(cube);
-
 
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(255, 255, 255);
@@ -96,7 +100,7 @@ fn main() {
     // world.objects.push(floor);
 
 
-    // --------- Camera ----------
+    // --------- Camera ----------s
     let mut cam = Camera::default(1080, 1080, PI / 6.0);
     cam.transform = translation(0.0, 0.0, -15.0);
 

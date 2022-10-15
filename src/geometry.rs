@@ -110,7 +110,7 @@ pub fn normal_at(shape: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
         0 => sphere_normal_at(shape, world_point), //add other cases later
         1 => plane_normal_at(shape, world_point),  //add other cases later
         2 => cube_normal_at(shape, world_point),   //add other cases later
-        _ => plane_normal_at(shape, world_point),  //add other cases later
+        _ => sphere_normal_at(shape, world_point),  //add other cases later
     }
 }
 
@@ -154,9 +154,8 @@ pub fn cube_normal_at(cube: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f6
     ];
 
     float_ord::sort(&mut pt_tmp);
-
+    
     let maxc = pt_tmp[pt_tmp.len() - 1];
-
 
     if maxc == object_point.x.abs() {
         return cube.transform.try_inverse().unwrap().transpose()

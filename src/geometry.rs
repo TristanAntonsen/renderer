@@ -80,7 +80,7 @@ impl Shape {
             ),
             material: Material::default(),
             shape_id: 3,
-            bounds: [0.0,1.0]
+            bounds: [-1.0,2.0]
         }
     }
 

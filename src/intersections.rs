@@ -243,20 +243,18 @@ pub fn intersect_cylinder<'a>(ray: &'a Ray, cylinder: &'a Shape) -> Option<Inter
 
     let a = new_ray.direction.x.powf(2.0) + new_ray.direction.z.powf(2.0);
 
-    if a < EPSILON {
-        return None
-    }
+    if a < EPSILON { return None }
 
     let b = 2.0 * new_ray.origin.x * new_ray.direction.x +
         2.0 * new_ray.origin.z * new_ray.direction.z;
+
     let c = new_ray.origin.x.powf(2.0) + new_ray.origin.z.powf(2.0) - 1.0;
 
     let discriminant = b.powf(2.0) - 4.0 * a * c;
 
     // if zero intersections
-    if discriminant < 0.0 {
-        return None;
-    };
+    if discriminant < 0.0 { return None };
+    
     // return intersections in ascending order
     let t1_tmp = (-b - discriminant.sqrt()) / (2.0 * a);
     let t2_tmp = (-b + discriminant.sqrt()) / (2.0 * a);
@@ -271,12 +269,17 @@ pub fn intersect_cylinder<'a>(ray: &'a Ray, cylinder: &'a Shape) -> Option<Inter
         t2 = t2_tmp;
     };
 
-
-    let y1 = ray.origin.y + t1 * ray.direction.y;
-
     let mut xs = Intersections::init();
-    xs.collection.push(Intersection::new(t1, cylinder));
-    xs.collection.push(Intersection::new(t2, cylinder));
+
+    let y1 = new_ray.origin.y + t1 * new_ray.direction.y;
+    if cylinder.bounds[0] < y1 && y1 < cylinder.bounds[1] {
+        xs.collection.push(Intersection::new(t1, cylinder));
+    }
+    
+    let y2 = new_ray.origin.y + t2 * new_ray.direction.y;
+    if cylinder.bounds[0] < y2 && y2 < cylinder.bounds[1] {
+        xs.collection.push(Intersection::new(t2, cylinder));
+    }
 
     Some(xs)
 }

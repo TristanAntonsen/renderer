@@ -65,6 +65,17 @@ impl Shape {
         }
     }
 
+    pub fn default_cylinder() -> Self {
+        Self {
+            origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0),
+            transform: Matrix4::new(
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+            ),
+            material: Material::default(),
+            shape_id: 3,
+        }
+    }
+
     pub fn set_transform(&mut self, transform: Matrix4<f64>) {
         self.transform = transform
     }
@@ -110,6 +121,7 @@ pub fn normal_at(shape: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
         0 => sphere_normal_at(shape, world_point), //add other cases later
         1 => plane_normal_at(shape, world_point),  //add other cases later
         2 => cube_normal_at(shape, world_point),   //add other cases later
+        3 => cylinder_normal_at(shape, world_point),   //add other cases later
         _ => sphere_normal_at(shape, world_point),  //add other cases later
     }
 }
@@ -167,6 +179,21 @@ pub fn cube_normal_at(cube: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f6
         return cube.transform.try_inverse().unwrap().transpose()
             * Matrix4x1::new(0.0, 0.0, object_point.z, 0.0).normalize();
     }
+}
+
+pub fn cylinder_normal_at(cylinder: &Shape, world_point: Matrix4x1<f64>) -> Matrix4x1<f64> {
+    // inverse of cylinder transformation * the point in world space
+    let object_point = cylinder.transform.try_inverse().unwrap() * world_point;
+
+    // removing y component
+    let object_normal = Matrix4x1::new(object_point.x, 0.0, object_point.z, 0.0);
+
+    // normal in world space
+    let mut world_normal = cylinder.transform.try_inverse().unwrap().transpose() * object_normal;
+    // setting world normal w = 0. Technically should use submatrix
+    world_normal[3] = 0.0;
+
+    return world_normal.normalize();
 }
 
 // ---------- Transformations ----------
@@ -228,22 +255,10 @@ pub fn rotation_y(theta: f64) -> Matrix4<f64> {
 
 pub fn rotation_z(theta: f64) -> Matrix4<f64> {
     Matrix4::new(
-        theta.cos(),
-        -theta.sin(),
-        0.0,
-        0.0,
-        theta.sin(),
-        theta.cos(),
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
+        theta.cos(),-theta.sin(),0.0,0.0,
+        theta.sin(),theta.cos(),0.0,0.0,
+        0.0,        0.0,        1.0,0.0,
+        0.0,        0.0,        0.0,1.0,
     )
 }
 

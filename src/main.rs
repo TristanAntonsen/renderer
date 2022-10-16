@@ -50,7 +50,6 @@ fn main() {
     let test_cube = Shape::default_cube();
     let t = intersect_cube(&test_ray, &test_cube);
 
-    println!("intersection: {:?}", t);
     // --------- Cube normal testing ----------
     
     let test_pt = Matrix4x1::new(

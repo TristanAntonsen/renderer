@@ -2,7 +2,7 @@ use crate::ray::{Ray,reflect};
 use crate::material::{Material, Pattern, stripe_at, pattern_at_shape};
 use crate::light::PointLight;
 use crate::world::World;
-use crate::intersections::{Comps, intersect_world, prepare_computations, self};
+use crate::intersections::{Comps, intersect_world, prepare_computations};
 use crate::geometry::{Shape, norm_3, cross_4};
 use crate::constants::Canvas;
 use image::imageops::colorops;

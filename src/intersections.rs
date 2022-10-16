@@ -135,15 +135,16 @@ pub fn prepare_computations<'a>(int: &'a Intersection, ray: &Ray, xs: &Vec<Inter
 pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> {
     let mut intersections = Intersections::init();
 
+    // for each object in the scene:
+    // 1. Check object for intersection with ray
+    // 2. Create intersection for each t value
+    // 3. Push intersections to world
+
     for object in world.objects.iter() {
+
         if let Some(i) = intersect(object, ray) {
-            // if let Some(i) = intersect_sphere(ray, object) {
-            intersections
-                .collection
-                .push(Intersection::new(i.0, &object));
-            intersections
-                .collection
-                .push(Intersection::new(i.1, &object));
+            let mut is = i.collection;
+            intersections.collection.append(&mut is);
         }
     }
 
@@ -156,12 +157,8 @@ pub fn intersect_world<'a>(ray: &'a Ray, world: &'a World) -> Intersections<'a> 
 
 // ------------ ABASTRACT SHAPE INTERSECTION FUNCTIONS -------------
 
-pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
-    // make sure ray is transformed
-    // this is already done in local functions, so could refactor and include here later
-    // let local_ray = ray.transform(shape.transform.try_inverse().unwrap());
+pub fn intersect<'a>(shape: &'a Shape, ray: &'a Ray) -> Option<Intersections<'a>> {
     // pass onto concrete intersection implementation
-    // "local intersect" here until it needs to be moved elsewhere
     match shape.shape_id {
         0 => intersect_sphere(&ray, &shape),
         1 => intersect_plane(&ray, &shape),
@@ -173,7 +170,7 @@ pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
 
 // ------------ OBJECT SPECIFIC INTERSECTION FUNCTIONS -------------
 
-pub fn intersect_cube(ray: &Ray, cube: &Shape) -> Option<(f64, f64)> {
+pub fn intersect_cube<'a>(ray: &'a Ray, cube: &'a Shape) -> Option<Intersections<'a>> {
     
     let (tmin, tmax);
     let (tmin_x, tmax_x, tmin_y, tmax_y, tmin_z, tmax_z);
@@ -198,12 +195,16 @@ pub fn intersect_cube(ray: &Ray, cube: &Shape) -> Option<(f64, f64)> {
         return None
     }
 
-    Some((tmin, tmax))
+    let mut xs = Intersections::init();
+    xs.collection.push(Intersection::new(tmin, cube));
+    xs.collection.push(Intersection::new(tmax, cube));
+
+    Some(xs)
 
 }
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
-pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
+pub fn intersect_sphere<'a>(ray: &'a Ray, sphere: &'a Shape) -> Option<Intersections<'a>> {
     // transform ray prior to calculation
     // multiply by the inverse of sphere.transform
     let transformation = sphere.transform.try_inverse().unwrap();
@@ -226,11 +227,15 @@ pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
     let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
     let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
 
-    Some((t1, t2))
+    let mut xs = Intersections::init();
+    xs.collection.push(Intersection::new(t1, sphere));
+    xs.collection.push(Intersection::new(t2, sphere));
+
+    Some(xs)
 }
 
 // determine the intersection t values (t1, t2) or None from a ray and a sphere
-pub fn intersect_cylinder(ray: &Ray, cylinder: &Shape) -> Option<(f64, f64)> {
+pub fn intersect_cylinder<'a>(ray: &'a Ray, cylinder: &'a Shape) -> Option<Intersections<'a>> {
     // transform ray prior to calculation
     // multiply by the inverse of cylinder.transform
     let transformation = cylinder.transform.try_inverse().unwrap();
@@ -269,11 +274,11 @@ pub fn intersect_cylinder(ray: &Ray, cylinder: &Shape) -> Option<(f64, f64)> {
 
     let y1 = ray.origin.y + t1 * ray.direction.y;
 
-    // if cylinder.bounds[0] < y1 & y1 < cylinder.bounds[1] {
+    let mut xs = Intersections::init();
+    xs.collection.push(Intersection::new(t1, cylinder));
+    xs.collection.push(Intersection::new(t2, cylinder));
 
-    // }
-
-    Some((t1, t2))
+    Some(xs)
 }
 
 
@@ -315,7 +320,7 @@ pub fn check_axis(origin: f64, direction: f64) -> Option<(f64, f64)> { //1 dimen
 
 }
 
-pub fn intersect_plane(ray: &Ray, plane: &Shape) -> Option<(f64, f64)> {
+pub fn intersect_plane<'a>(ray: &'a Ray, plane: &'a Shape) -> Option<Intersections<'a>> {
     // if ray is parallel to XY plane
     let transformation = plane.transform.try_inverse().unwrap();
     let new_ray = ray.transform(transformation);
@@ -325,8 +330,11 @@ pub fn intersect_plane(ray: &Ray, plane: &Shape) -> Option<(f64, f64)> {
     }
 
     let t = -&new_ray.origin.y / &new_ray.direction.y;
-    return Some((t, t)); // might need to rework the double t
-}
+    let mut xs = Intersections::init();
+
+    xs.collection.push(Intersection::new(t, plane));
+
+    Some(xs)}
 
 // ------------ DISPLAY/DEBUG -------------
 

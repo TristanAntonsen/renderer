@@ -253,10 +253,42 @@ pub fn intersect_cylinder(ray: &Ray, cylinder: &Shape) -> Option<(f64, f64)> {
         return None;
     };
     // return intersections in ascending order
-    let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
-    let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
+    let t1_tmp = (-b - discriminant.sqrt()) / (2.0 * a);
+    let t2_tmp = (-b + discriminant.sqrt()) / (2.0 * a);
+
+    let (t1, t2);
+
+    if t1_tmp > t2_tmp {
+        t1 = t2_tmp;
+        t2 = t1_tmp;
+    } else {
+        t1 = t1_tmp;
+        t2 = t2_tmp;
+    };
+
+
+    let y1 = ray.origin.y + t1 * ray.direction.y;
+
+    // if cylinder.bounds[0] < y1 & y1 < cylinder.bounds[1] {
+
+    // }
 
     Some((t1, t2))
+}
+
+
+pub fn check_cap(ray: &Ray,  t: f64) -> bool {
+
+    let x = ray.origin.x + t * ray.direction.x;
+    let z = ray.origin.z + t * ray.direction.z;
+
+    let b = x.powf(2.0) + z.powf(2.0);
+
+    if b <= 1.0 {
+        true
+    } else {
+        false
+    }
 }
 
 pub fn check_axis(origin: f64, direction: f64) -> Option<(f64, f64)> { //1 dimensional calculation

@@ -1,4 +1,4 @@
-use crate::geometry::{normal_at, sphere_normal_at, Shape};
+use crate::geometry::{normal_at, Shape};
 use crate::ray::Ray;
 use crate::ray::{position, reflect};
 use crate::world::World;
@@ -166,6 +166,7 @@ pub fn intersect(shape: &Shape, ray: &Ray) -> Option<(f64, f64)> {
         0 => intersect_sphere(&ray, &shape),
         1 => intersect_plane(&ray, &shape),
         2 => intersect_cube(&ray, &shape),
+        3 => intersect_cylinder(&ray, &shape),
         _ => None,
     }
 }
@@ -221,6 +222,36 @@ pub fn intersect_sphere(ray: &Ray, sphere: &Shape) -> Option<(f64, f64)> {
     if discriminant < 0.0 {
         return None;
     }
+    // return intersections in ascending order
+    let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
+    let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
+
+    Some((t1, t2))
+}
+
+// determine the intersection t values (t1, t2) or None from a ray and a sphere
+pub fn intersect_cylinder(ray: &Ray, cylinder: &Shape) -> Option<(f64, f64)> {
+    // transform ray prior to calculation
+    // multiply by the inverse of cylinder.transform
+    let transformation = cylinder.transform.try_inverse().unwrap();
+    let new_ray = ray.transform(transformation);
+
+    let a = new_ray.direction.x.powf(2.0) + new_ray.direction.z.powf(2.0);
+
+    if a < EPSILON {
+        return None
+    }
+
+    let b = 2.0 * new_ray.origin.x * new_ray.direction.x +
+        2.0 * new_ray.origin.z * new_ray.direction.z;
+    let c = new_ray.origin.x.powf(2.0) + new_ray.origin.z.powf(2.0) - 1.0;
+
+    let discriminant = b.powf(2.0) - 4.0 * a * c;
+
+    // if zero intersections
+    if discriminant < 0.0 {
+        return None;
+    };
     // return intersections in ascending order
     let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
     let t2 = (-b + discriminant.sqrt()) / (2.0 * a);

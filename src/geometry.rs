@@ -7,6 +7,7 @@ pub struct Shape {
     pub transform: Matrix4<f64>,
     pub material: Material,
     pub shape_id: u8,
+    pub bounds: [f64; 2] // cylinder only
 }
 
 impl Shape {
@@ -18,6 +19,7 @@ impl Shape {
             ),
             material: Material::default(),
             shape_id: 0,
+            bounds: [-1.0,1.0]
         }
     }
 
@@ -29,6 +31,7 @@ impl Shape {
             ),
             material: Material::default(),
             shape_id: 0,
+            bounds: [-1.0,1.0]
         }
     }
 
@@ -40,6 +43,7 @@ impl Shape {
             ),
             material: Material::glass(),
             shape_id: 0,
+            bounds: [-1.0,1.0]
         }
     }
 
@@ -51,6 +55,7 @@ impl Shape {
             ),
             material: Material::default(),
             shape_id: 1,
+            bounds: [0.0,0.0]
         }
     }
 
@@ -62,6 +67,8 @@ impl Shape {
             ),
             material: Material::default(),
             shape_id: 2,
+            bounds: [-1.0,1.0]
+
         }
     }
 
@@ -73,6 +80,7 @@ impl Shape {
             ),
             material: Material::default(),
             shape_id: 3,
+            bounds: [0.0,1.0]
         }
     }
 

@@ -11,21 +11,18 @@ mod world;
 use std::f64::consts::PI;
 
 use constants::Canvas;
-use geometry::{rotation_x, rotation_y, rotation_z, scaling, cube_normal_at, translation, Shape};
-use intersections::{
-    intersect_sphere, intersect_cube, intersect_world, prepare_computations, Comps, Intersection, Intersections,
-};
+use geometry::{rotation_x, rotation_y, cube_normal_at, translation, Shape};
+use intersections::{intersect_sphere, intersect_cube};
 use light::PointLight;
 use material::{color_from_rgb, Material, Pattern};
-use nalgebra::{Matrix4, Matrix4x1, Point};
-use noise::Perlin;
-use ray::{position, Ray};
-use renderer::{color_at, ray_for_pixel, render};
-use world::{view_transform, World};
+use nalgebra::Matrix4x1;
+use ray::Ray;
+use renderer::render;
+use world::World;
 
 use crate::{
     export::_save_png,
-    renderer::{lighting, shade_hit, Camera, reflected_color},
+    renderer::Camera,
 };
 extern crate image;
 
@@ -68,16 +65,16 @@ fn main() {
 
 
     // --------- Objects -----------
-    // let mut sphere_1 = Shape::default_sphere();
-    // sphere_1.material.color = color_from_rgb(43, 48, 58);
-    // sphere_1.transform = translation(0.0, 0.25, 0.0);
+    let mut sphere_1 = Shape::default_sphere();
+    sphere_1.material.color = color_from_rgb(43, 48, 58);
+    sphere_1.transform = translation(0.0, 0.25, 0.0);
     // sphere_1.material.reflective = 0.35;
     // world.objects.push(sphere_1);
 
-    // let mut sphere_2 = Shape::default_sphere();
-    // sphere_2.material.color = color_from_rgb(146, 220, 229);
+    let mut sphere_2 = Shape::default_sphere();
+    sphere_2.material.color = color_from_rgb(146, 220, 229);
     // sphere_2.material.reflective = 0.25;
-    // sphere_2.transform = translation(2.25, 0.25, 0.0);
+    sphere_2.transform = translation(2.25, 0.25, 0.0);
     // world.objects.push(sphere_2);
 
     // let mut sphere_3 = Shape::default_sphere();
@@ -86,18 +83,21 @@ fn main() {
     // sphere_3.transform = translation(-2.25, 0.25, 0.0);
     // world.objects.push(sphere_3);
 
-    let mut cube = Shape::default_cube();
-    // cube.transform = translation(0.0, 0.0, -1.0);
-    // cube.transform = scaling(0.5, 0.5, 0.5);
-    cube.transform = rotation_y(PI / 3.0) * rotation_x(PI / 3.0) * translation(0.0, -1.0, 0.0);
-    world.objects.push(cube);
+    let mut cube_1 = Shape::default_cube();
+    cube_1.material.color = color_from_rgb(214, 73, 51);
+    // cube_1.material.reflective = 0.25;
+    cube_1.transform = 
+        translation(0.0, 0.75, 0.0) *
+        rotation_y(PI / 4.0) *
+        rotation_x(PI / 4.0);
+    world.objects.push(cube_1);
 
     let mut floor = Shape::plane();
     floor.material.color = color_from_rgb(255, 255, 255);
     // floor.material.reflective = 0.5;
     floor.material.pattern = Pattern::checker([0.0,0.0,0.0], [1.0,1.0,1.0]);
     floor.transform = translation(0.0, -0.75, 0.0);
-    // world.objects.push(floor);
+    world.objects.push(floor);
 
 
     // --------- Camera ----------s

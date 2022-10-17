@@ -71,7 +71,7 @@ fn main() {
     // world.objects.push(sphere_1);
 
     let mut cyl_1 = Shape::default_cylinder();
-    cyl_1.transform = rotation_z(PI / 3.0);
+    cyl_1.transform = rotation_x(PI / 2.5);
     world.objects.push(cyl_1);
 
     let mut cube_1 = Shape::default_cube();

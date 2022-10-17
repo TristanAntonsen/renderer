@@ -241,9 +241,17 @@ pub fn intersect_cylinder<'a>(ray: &'a Ray, cylinder: &'a Shape) -> Option<Inter
     let transformation = cylinder.transform.try_inverse().unwrap();
     let new_ray = ray.transform(transformation);
 
+    let mut xs = Intersections::init();
+
+
     let a = new_ray.direction.x.powf(2.0) + new_ray.direction.z.powf(2.0);
 
-    if a < EPSILON { return None }
+    if a < EPSILON {
+        if let Some(mut cap_xs) = intersect_caps(new_ray, &cylinder) {
+            xs.collection.append(&mut cap_xs.collection);
+        };
+        return Some(xs)
+        }
 
     let b = 2.0 * new_ray.origin.x * new_ray.direction.x +
         2.0 * new_ray.origin.z * new_ray.direction.z;
@@ -269,7 +277,6 @@ pub fn intersect_cylinder<'a>(ray: &'a Ray, cylinder: &'a Shape) -> Option<Inter
         t2 = t2_tmp;
     };
 
-    let mut xs = Intersections::init();
 
     let y1 = new_ray.origin.y + t1 * new_ray.direction.y;
     if cylinder.bounds[0] < y1 && y1 < cylinder.bounds[1] {
@@ -280,6 +287,10 @@ pub fn intersect_cylinder<'a>(ray: &'a Ray, cylinder: &'a Shape) -> Option<Inter
     if cylinder.bounds[0] < y2 && y2 < cylinder.bounds[1] {
         xs.collection.push(Intersection::new(t2, cylinder));
     }
+
+    if let Some(mut cap_xs) = intersect_caps(new_ray, &cylinder) {
+        xs.collection.append(&mut cap_xs.collection)
+    };
 
     Some(xs)
 }
@@ -297,6 +308,31 @@ pub fn check_cap(ray: &Ray,  t: f64) -> bool {
     } else {
         false
     }
+}
+pub fn intersect_caps<'a>(ray: Ray, cyl: &'a Shape) -> Option<Intersections<'a>> {
+    // if ray is parallel to XY plane
+    let transformation = cyl.transform.try_inverse().unwrap();
+    let new_ray = ray.transform(transformation);
+
+    
+    if new_ray.direction.y < EPSILON {
+        return None
+    }
+    let mut xs = Intersections::init();
+
+    //lower cap 
+    let mut t = (cyl.bounds[0] - new_ray.origin.y) / new_ray.direction.y;
+    if check_cap(&new_ray, t) {
+        xs.collection.push(Intersection::new(t, cyl));
+    }
+    //upper cap 
+    t = (cyl.bounds[1] - new_ray.origin.y) / new_ray.direction.y;
+    if check_cap(&new_ray, t) {
+        xs.collection.push(Intersection::new(t, cyl));
+    }
+
+    Some(xs)
+
 }
 
 pub fn check_axis(origin: f64, direction: f64) -> Option<(f64, f64)> { //1 dimensional calculation

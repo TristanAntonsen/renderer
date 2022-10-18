@@ -12,7 +12,7 @@ use std::f64::consts::PI;
 
 use constants::Canvas;
 use geometry::{rotation_x, rotation_y, rotation_z, scaling, cube_normal_at, translation, Shape};
-use intersections::{intersect_sphere, intersect_cube};
+use intersections::{intersect_sphere, intersect_cube, intersect_caps};
 use light::PointLight;
 use material::{color_from_rgb, Material, Pattern};
 use nalgebra::Matrix4x1;
@@ -41,27 +41,18 @@ fn main() {
 
     // --------- Test ray ----------
     let test_ray = Ray {
-        origin: Matrix4x1::new(2.0, 2.0, 0.0, 1.0),
-        direction: Matrix4x1::new(-1.0, 0.0, 0.0, 0.0),
+        origin: Matrix4x1::new(0.0, 0.0, 0.0, 1.0),
+        direction: Matrix4x1::new(0.0, 0.0, 1.0, 0.0),
     };
 
-    // --------- Cube intersection testing ----------
-    
-    let test_cube = Shape::default_cube();
-    let t = intersect_cube(&test_ray, &test_cube);
-
-    // --------- Cube normal testing ----------
-    
-    let test_pt = Matrix4x1::new(
-        1.0,
-        1.0,
-        0.5,
-        1.0
-    );
-
-    let n = cube_normal_at(&test_cube, test_pt);
-    println!("normal: {}",n);
-
+    // --------- Cap intersection testing ----------
+    let mut test_cyl = Shape::default_cylinder();
+    test_cyl.transform = rotation_x(PI / 2.5);
+    if let Some(xs) = intersect_caps(test_ray, &test_cyl) {  
+        println!("hey");
+        println!("{:?}",xs.collection[0].t);
+        println!("{:?}",xs.collection[1].t);
+    };
 
     // --------- Objects -----------
     let mut sphere_1 = Shape::default_sphere();
@@ -71,7 +62,8 @@ fn main() {
     // world.objects.push(sphere_1);
 
     let mut cyl_1 = Shape::default_cylinder();
-    cyl_1.transform = rotation_x(PI / 2.5);
+    cyl_1.transform = rotation_x(PI / 2.50);
+    // cyl_1.transform = translation(0.0, -2.0, 0.0);
     world.objects.push(cyl_1);
 
     let mut cube_1 = Shape::default_cube();

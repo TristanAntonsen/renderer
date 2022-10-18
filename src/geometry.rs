@@ -82,7 +82,7 @@ impl Shape {
             ),
             material: Material::default(),
             shape_id: 3,
-            bounds: [-1.0,2.0]
+            bounds: [-1.0,1.0]
         }
     }
 
@@ -200,19 +200,25 @@ pub fn cylinder_normal_at(cylinder: &Shape, world_point: Matrix4x1<f64>) -> Matr
     let d = object_point.x.powf(2.0) + object_point.z.powf(2.0);
 
     if d < 1.0 && object_point.y >= cylinder.bounds[1] - EPSILON {
-        object_normal = Matrix4x1::new(0.0, 1.0, 0.0, 0.0)
+
+        object_normal = Matrix4x1::new(0.0, 1.0, 0.0, 1.0)
+
     } else if d < 1.0 && object_point.y <= cylinder.bounds[0] + EPSILON {
-        object_normal = Matrix4x1::new(0.0 , -1.0, 0.0, 0.0)
+
+        object_normal = Matrix4x1::new(0.0 , -1.0, 0.0, 1.0)
+
     } else {
-        object_normal = Matrix4x1::new(object_point.x, 0.0, object_point.z, 0.0); 
+
+        object_normal = Matrix4x1::new(object_point.x, 0.0, object_point.z, 1.0); 
+        
     }
 
     // normal in world space
-    let mut world_normal = cylinder.transform.try_inverse().unwrap().transpose() * object_normal;
+    let mut world_normal = cylinder.transform.try_inverse().unwrap().transpose() * object_normal.normalize();
     // setting world normal w = 0. Technically should use submatrix
     world_normal[3] = 0.0;
 
-    return world_normal.normalize();
+    return world_normal;
 }
 
 

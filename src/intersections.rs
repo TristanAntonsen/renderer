@@ -312,21 +312,21 @@ pub fn check_cap(ray: &Ray,  t: f64) -> bool {
 }
 pub fn intersect_caps<'a>(ray: Ray, cyl: &'a Shape) -> Option<Intersections<'a>> {
     // if ray is parallel to XY plane
-    let transformation = cyl.transform.try_inverse().unwrap();
-    let new_ray = ray.transform(transformation);
-    if new_ray.direction.y.abs() < EPSILON {
-        return None
+    // let transformation = cyl.transform.try_inverse().unwrap();
+    if ray.direction.y.abs() < EPSILON {
+        return None;
     }
+    
     let mut xs = Intersections::init();
 
     //lower cap 
-    let mut t = (cyl.bounds[0] - new_ray.origin.y) / new_ray.direction.y;
-    if check_cap(&new_ray, t) {
+    let mut t = (cyl.bounds[0] - ray.origin.y) / ray.direction.y;
+    if check_cap(&ray, t) {
         xs.collection.push(Intersection::new(t, cyl));
     }
     //upper cap 
-    t = (cyl.bounds[1] - new_ray.origin.y) / new_ray.direction.y;
-    if check_cap(&new_ray, t) {
+    t = (cyl.bounds[1] - ray.origin.y) / ray.direction.y;
+    if check_cap(&ray, t) {
         xs.collection.push(Intersection::new(t, cyl));
     }
 

@@ -249,8 +249,9 @@ pub fn intersect_cylinder<'a>(ray: &'a Ray, cylinder: &'a Shape) -> Option<Inter
     if a < EPSILON {
         if let Some(mut cap_xs) = intersect_caps(new_ray, &cylinder) {
             xs.collection.append(&mut cap_xs.collection);
+            return Some(xs);
         };
-        return Some(xs)
+        return None
         }
 
     let b = 2.0 * new_ray.origin.x * new_ray.direction.x +
@@ -313,9 +314,7 @@ pub fn intersect_caps<'a>(ray: Ray, cyl: &'a Shape) -> Option<Intersections<'a>>
     // if ray is parallel to XY plane
     let transformation = cyl.transform.try_inverse().unwrap();
     let new_ray = ray.transform(transformation);
-
-    
-    if new_ray.direction.y < EPSILON {
+    if new_ray.direction.y.abs() < EPSILON {
         return None
     }
     let mut xs = Intersections::init();

@@ -3,7 +3,15 @@ use std::f64::EPSILON;
 use crate::material::Material;
 use nalgebra::{ComplexField, Matrix3x1, Matrix4, Matrix4x1};
 
-// struct for Sphere object used for calculating intersections
+// struct for Group object used for grouping shapes
+
+pub struct Group {
+    pub origin: Matrix4x1<f64>,
+    pub transform: Matrix4<f64>,
+    pub group_id: u8
+}
+
+// struct for Shape object used for calculating intersections
 pub struct Shape {
     pub origin: Matrix4x1<f64>,
     pub transform: Matrix4<f64>,
